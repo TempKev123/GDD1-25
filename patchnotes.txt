@@ -1,0 +1,3 @@
+0.1.0: initial version forked for professor.
+0.2.0 changed orientation to a side stroller and added temporary boss object.
+0.2.1 changed direction to move to the right instead.
