@@ -99,7 +99,7 @@ public class Scene1 extends JPanel {
 
     private void initAudio() {
         try {
-            String filePath = "src/audio/scene1.wav";
+            String filePath = "GDD1-25\\src\\audio\\scene1.wav";
             audioPlayer = new AudioPlayer(filePath);
             audioPlayer.play();
         } catch (Exception e) {
@@ -171,42 +171,29 @@ public class Scene1 extends JPanel {
     }
 
     private void drawMap(Graphics g) {
-        // Draw scrolling starfield background
+    int scrollOffset = (frame) % BLOCKWIDTH;
 
-        // Calculate smooth scrolling offset (1 pixel per frame)
-        int scrollOffset = (frame) % BLOCKHEIGHT;
+    int baseCol = (frame) / BLOCKWIDTH;
+    int colsNeeded = (BOARD_WIDTH / BLOCKWIDTH) + 2;
 
-        // Calculate which rows to draw based on screen position
-        int baseRow = (frame) / BLOCKHEIGHT;
-        int rowsNeeded = (BOARD_HEIGHT / BLOCKHEIGHT) + 2; // +2 for smooth scrolling
+    for (int screenCol = 0; screenCol < colsNeeded; screenCol++) {
+        int mapCol = (baseCol + screenCol) % MAP[0].length;
 
-        // Loop through rows that should be visible on screen
-        for (int screenRow = 0; screenRow < rowsNeeded; screenRow++) {
-            // Calculate which MAP row to use (with wrapping)
-            int mapRow = (baseRow + screenRow) % MAP.length;
+        int x = BOARD_WIDTH - ((screenCol * BLOCKWIDTH) - scrollOffset);
 
-            // Calculate Y position for this row
-            // int y = (screenRow * BLOCKHEIGHT) - scrollOffset;
-            int y = BOARD_HEIGHT - ( (screenRow * BLOCKHEIGHT) - scrollOffset );
-
-            // Skip if row is completely off-screen
-            if (y > BOARD_HEIGHT || y < -BLOCKHEIGHT) {
-                continue;
-            }
-
-            // Draw each column in this row
-            for (int col = 0; col < MAP[mapRow].length; col++) {
-                if (MAP[mapRow][col] == 1) {
-                    // Calculate X position
-                    int x = col * BLOCKWIDTH;
-
-                    // Draw a cluster of stars
-                    drawStarCluster(g, x, y, BLOCKWIDTH, BLOCKHEIGHT);
-                }
-            }
+        if (x > BOARD_WIDTH || x < -BLOCKWIDTH) {
+            continue;
         }
 
+        for (int row = 0; row < MAP.length; row++) {
+            if (MAP[row][mapCol] == 1) {
+                int y = row * BLOCKHEIGHT;
+                drawStarCluster(g, x, y, BLOCKWIDTH, BLOCKHEIGHT);
+            }
+        }
     }
+}
+
 
     private void drawStarCluster(Graphics g, int x, int y, int width, int height) {
         // Set star color to white
@@ -382,8 +369,8 @@ public class Scene1 extends JPanel {
             // Create a new enemy based on the spawn details
             switch (sd.type) {
                 case "Alien1":
-                    Enemy enemy = new Alien1(sd.x, sd.y);
-                    enemies.add(enemy);
+                    Enemy alien = new Alien1(BOARD_WIDTH, randomizer.nextInt(BOARD_HEIGHT - ALIEN_HEIGHT));
+                    enemies.add(alien);
                     break;
                 // Add more cases for different enemy types if needed
                 case "Alien2":
@@ -423,13 +410,14 @@ public class Scene1 extends JPanel {
         // Enemies
         for (Enemy enemy : enemies) {
             if (enemy.isVisible()) {
-                enemy.act(direction);
+                enemy.act();
             }
         }
 
         // shot
         List<Shot> shotsToRemove = new ArrayList<>();
         for (Shot shot : shots) {
+            shot.act();
 
             if (shot.isVisible()) {
                 int shotX = shot.getX();
@@ -571,13 +559,14 @@ public class Scene1 extends JPanel {
             int key = e.getKeyCode();
 
             if (key == KeyEvent.VK_SPACE && inGame) {
-                System.out.println("Shots: " + shots.size());
-                if (shots.size() < 4) {
-                    // Create a new shot and add it to the list
-                    Shot shot = new Shot(x, y);
-                    shots.add(shot);
-                }
-            }
+    if (shots.size() < 4) {
+        int shotStartX = player.getX() + PLAYER_WIDTH;
+        int shotStartY = player.getY() + PLAYER_HEIGHT / 2;
+        Shot shot = new Shot(shotStartX, shotStartY);
+        shots.add(shot);
+    }
+}
+
 
         }
     }
