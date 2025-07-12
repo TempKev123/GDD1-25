@@ -7,6 +7,7 @@ import gdd.SpawnDetails;
 import gdd.powerup.PowerUp;
 import gdd.powerup.SpeedUp;
 import gdd.sprite.Alien1;
+import gdd.sprite.Alien2;
 import gdd.sprite.Enemy;
 import gdd.sprite.Explosion;
 import gdd.sprite.Player;
@@ -122,6 +123,9 @@ public class Scene1 extends JPanel {
         spawnMap.put(501, new SpawnDetails("Alien1", 150, 0));
         spawnMap.put(502, new SpawnDetails("Alien1", 200, 0));
         spawnMap.put(503, new SpawnDetails("Alien1", 350, 0));
+        spawnMap.put(600, new SpawnDetails("Alien2", BOARD_WIDTH, 100));
+        spawnMap.put(700, new SpawnDetails("Alien2", BOARD_WIDTH, 200));
+
     }
 
     private void initBoard() {
@@ -374,8 +378,8 @@ public class Scene1 extends JPanel {
                     break;
                 // Add more cases for different enemy types if needed
                 case "Alien2":
-                    // Enemy enemy2 = new Alien2(sd.x, sd.y);
-                    // enemies.add(enemy2);
+                    Enemy alien2 = new Alien2(sd.x, sd.y);
+                    enemies.add(alien2);
                     break;
                 case "PowerUp-SpeedUp":
                     // Handle speed up item spawn
@@ -416,47 +420,38 @@ public class Scene1 extends JPanel {
 
         // shot
         List<Shot> shotsToRemove = new ArrayList<>();
-        for (Shot shot : shots) {
-            shot.act();
 
-            if (shot.isVisible()) {
-                int shotX = shot.getX();
-                int shotY = shot.getY();
+for (Shot shot : shots) {
+    shot.act();
 
-                for (Enemy enemy : enemies) {
-                    // Collision detection: shot and enemy
-                    int enemyX = enemy.getX();
-                    int enemyY = enemy.getY();
+    if (!shot.isVisible()) {
+        shotsToRemove.add(shot); // <- ถ้าหายออกจอ, ถูกยิง
+        continue;
+    }
 
-                    if (enemy.isVisible() && shot.isVisible()
-                            && shotX >= (enemyX)
-                            && shotX <= (enemyX + ALIEN_WIDTH)
-                            && shotY >= (enemyY)
-                            && shotY <= (enemyY + ALIEN_HEIGHT)) {
+    int shotX = shot.getX();
+    int shotY = shot.getY();
 
-                        var ii = new ImageIcon(IMG_EXPLOSION);
-                        enemy.setImage(ii.getImage());
-                        enemy.setDying(true);
-                        explosions.add(new Explosion(enemyX, enemyY));
-                        deaths++;
-                        shot.die();
-                        shotsToRemove.add(shot);
-                    }
-                }
+    for (Enemy enemy : enemies) {
+        int enemyX = enemy.getX();
+        int enemyY = enemy.getY();
 
-                int y = shot.getY();
-                // y -= 4;
-                y -= 20;
-
-                if (y < 0) {
-                    shot.die();
-                    shotsToRemove.add(shot);
-                } else {
-                    shot.setY(y);
-                }
-            }
+        if (enemy.isVisible() && shotX >= enemyX && shotX <= enemyX + ALIEN_WIDTH
+                && shotY >= enemyY && shotY <= enemyY + ALIEN_HEIGHT) {
+            var ii = new ImageIcon(IMG_EXPLOSION);
+            enemy.setImage(ii.getImage());
+            enemy.setDying(true);
+            explosions.add(new Explosion(enemyX, enemyY));
+            deaths++;
+            shot.die();
+            shotsToRemove.add(shot);
         }
-        shots.removeAll(shotsToRemove);
+    }
+}
+
+shots.removeAll(shotsToRemove);
+// หรือใช้ shots.removeIf(shot -> !shot.isVisible());
+
 
         // enemies
         // for (Enemy enemy : enemies) {

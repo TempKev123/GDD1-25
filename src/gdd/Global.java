@@ -35,4 +35,5 @@ public class Global {
     public static final String IMG_EXPLOSION = "GDD1-25\\src\\images\\explosion.png";
     public static final String IMG_TITLE = "GDD1-25\\src\\images\\title.png";
     public static final String IMG_POWERUP_SPEEDUP = "GDD1-25\\src\\images\\powerup-s.png";
+    public static final String IMG_ALIEN2 = "GDD1-25\\src\\images\\jeff.png";
 }
