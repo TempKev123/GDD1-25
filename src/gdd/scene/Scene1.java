@@ -59,32 +59,20 @@ public class Scene1 extends JPanel {
     private int currentRow = -1;
     // TODO load this map from a file
     private int mapOffset = 0;
-    private final int[][] MAP = {
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-    };
+    
+    private final int[][] MAP;
+
+    // random generates a map of 0 and 1s to determine star positions
+    {
+        int[][] tempMap = new int[24][12];
+        Random rand = new Random();
+        for (int i = 0; i < tempMap.length; i++) {
+            for (int j = 0; j < tempMap[i].length; j++) {
+                tempMap[i][j] = rand.nextBoolean() ? 1 : 0;
+            }
+        }
+        MAP = tempMap;
+    }
 
     private HashMap<Integer, SpawnDetails> spawnMap = new HashMap<>();
     private AudioPlayer audioPlayer;
@@ -177,15 +165,19 @@ public class Scene1 extends JPanel {
     }
 
     private void drawMap(Graphics g) {
+     // stars background
     int scrollOffset = (frame) % BLOCKWIDTH;
+    //int scrollOffset = BLOCKWIDTH - (frame % BLOCKWIDTH);
+
 
     int baseCol = (frame) / BLOCKWIDTH;
     int colsNeeded = (BOARD_WIDTH / BLOCKWIDTH) + 2;
 
     for (int screenCol = 0; screenCol < colsNeeded; screenCol++) {
-        int mapCol = (baseCol - screenCol + MAP[0].length) % MAP[0].length;
+        int mapCol = (baseCol + screenCol) % MAP[0].length;
 
-        int x = (screenCol * BLOCKWIDTH) - scrollOffset;
+        //int x = BOARD_WIDTH - ((screenCol * BLOCKWIDTH) - scrollOffset);
+        int x = ((screenCol * BLOCKWIDTH) - scrollOffset);
 
         if (x > BOARD_WIDTH || x < -BLOCKWIDTH) {
             continue;
@@ -198,30 +190,6 @@ public class Scene1 extends JPanel {
             }
         }
     }
-
-
-        /* old background
-    int scrollOffset = (frame) % BLOCKWIDTH;
-
-    int baseCol = (frame) / BLOCKWIDTH;
-    int colsNeeded = (BOARD_WIDTH / BLOCKWIDTH) + 2;
-
-    for (int screenCol = 0; screenCol < colsNeeded; screenCol++) {
-        int mapCol = (baseCol + screenCol) % MAP[0].length;
-
-        int x = BOARD_WIDTH - ((screenCol * BLOCKWIDTH) - scrollOffset);
-
-        if (x > BOARD_WIDTH || x < -BLOCKWIDTH) {
-            continue;
-        }
-
-        for (int row = 0; row < MAP.length; row++) {
-            if (MAP[row][mapCol] == 1) {
-                int y = row * BLOCKHEIGHT;
-                drawStarCluster(g, x, y, BLOCKWIDTH, BLOCKHEIGHT);
-            }
-        }
-    }*/
 }
 
 
