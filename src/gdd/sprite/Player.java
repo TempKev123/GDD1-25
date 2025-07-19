@@ -14,9 +14,7 @@ public class Player extends Sprite {
     private int width;
     private int height;
     private int currentSpeed = 2;
-    private int speedLevel = 0;
-    private int multishotLevel = 0;
-    private int weaponType = 0; // 0 = default, 1 = 3-way
+    private boolean alive = true;
 
     private Rectangle bounds = new Rectangle(175, 135, 17, 32);
 
@@ -40,7 +38,18 @@ public class Player extends Sprite {
         setY(START_Y);
     }
 
-    // Movement logic
+    public int getSpeed() {
+        return currentSpeed;
+    }
+
+    public int setSpeed(int speed) {
+        if (speed < 1) {
+            speed = 1;
+        }
+        this.currentSpeed = speed;
+        return currentSpeed;
+    }
+
     public void act() {
         y += dy;
 
@@ -73,63 +82,11 @@ public class Player extends Sprite {
         }
     }
 
-    // Speed power-up
-    public int getSpeed() {
-        return currentSpeed;
+    public boolean isAlive() {
+        return alive;
     }
 
-    public int setSpeed(int speed) {
-        if (speed < 1) {
-            speed = 1;
-        }
-        this.currentSpeed = speed;
-        return currentSpeed;
-    }
-
-    public void upgradeSpeed() {
-        if (speedLevel < 4) {
-            speedLevel++;
-            currentSpeed = 2 + speedLevel;
-        }
-    }
-
-    public int getSpeedLevel() {
-        return speedLevel;
-    }
-
-    // Multishot power-up
-    public void upgradeMultiShot() {
-        if (multishotLevel < 4) {
-            multishotLevel++;
-        }
-    }
-
-    public int getMultishotLevel() {
-        return multishotLevel;
-    }
-
-    public void setMultishotLevel(int level) {
-        this.multishotLevel = level;
-    }
-
-    public void setWeaponType(int type) {
-    this.weaponType = type;
-}
-
-public int getWeaponType() {
-    return weaponType;
-}
-
-    // Reset all power-ups (use when game restarts)
-    public void resetPowerUps() {
-        multishotLevel = 0;
-        speedLevel = 0;
-        currentSpeed = 2;
-        weaponType = 0;
-    }
-
-    // Optional: collision bounds
-    public Rectangle getBounds() {
-        return new Rectangle(x, y, width, height);
+    public void setAlive(boolean alive) {
+        this.alive = alive;
     }
 }

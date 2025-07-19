@@ -5,7 +5,7 @@ import javax.swing.ImageIcon;
 
 public class Alien2 extends Enemy {
 
-    private static final int SPEED = 4;
+    private static final int SPEED = 2;
     private int dy = 2; // เคลื่อนขึ้นลง
 
     public Alien2(int x, int y) {
@@ -23,7 +23,7 @@ public class Alien2 extends Enemy {
     }
 
     @Override
-    public void act() {
+    public void act(Player player) {
         x -= SPEED;
         y += dy;
 
@@ -34,6 +34,12 @@ public class Alien2 extends Enemy {
 
         if (x + getImage().getWidth(null) < 0) {
             die();
+        }
+
+        // Collision check with player (same as in Enemy)
+        if (this.collidesWith(player)) {
+            player.setAlive(false);
+            System.out.println("Game Over: Alien2 collided with Player.");
         }
     }
 }

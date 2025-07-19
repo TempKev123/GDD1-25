@@ -1,6 +1,7 @@
 package gdd.sprite;
 
 import java.awt.Image;
+import java.awt.Rectangle;
 
 abstract public class Sprite {
 
@@ -79,5 +80,9 @@ abstract public class Sprite {
 
     public boolean isDying() {
         return this.dying;
+    }
+
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, image.getWidth(null), image.getHeight(null));
     }
 }

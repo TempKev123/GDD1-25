@@ -23,12 +23,17 @@ public class Enemy extends Sprite {
         setImage(scaledImage);
     }
 
-    public void act() {
+    public void act(Player player) {
         this.x -= ENEMY_SPEED;
 
         // หายเมื่อพ้นขอบจอ
         if (this.x + getImage().getWidth(null) < 0) {
             die();
+        }
+
+        if (this.collidesWith(player)) {
+            player.setAlive(false);
+            System.out.println("Collision detected between enemy and player!");
         }
     }
 }
