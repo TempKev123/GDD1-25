@@ -34,10 +34,10 @@ public class Global {
     public static final String IMG_SHOT = "images/shot.png";
     public static final String IMG_EXPLOSION = "images/explosion.png";
     public static final String IMG_TITLE = "images/title.png";
-    public static final String IMG_POWERUP_SPEEDUP = "images/powerup-s.png";
+    public static final String IMG_POWERUP_SPEEDUP = "images/speedup.png";
     public static final String IMG_ALIEN2 = "images/jeff.png";
-    public static final String IMG_POWERUP_MULTISHOT = "images/powerup-s.png";
-    public static final String IMG_POWERUP_WEAPON = "images/powerup-s.png";
-    public static final String IMG_POWERUP_LAZER = "images/powerup-s.png";
+    public static final String IMG_POWERUP_MULTISHOT = "images/multishot.png";
+    public static final String IMG_POWERUP_WEAPON = "images/upgrade.png";
+    public static final String IMG_POWERUP_LAZER = "images/upgrade.png";
 
 }

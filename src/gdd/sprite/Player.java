@@ -13,7 +13,7 @@ public class Player extends Sprite {
     private int dy;
     private int width;
     private int height;
-    private int currentSpeed = 2;
+    private int currentSpeed = 4; // Default speed
     private int speedLevel = 0;
     private int multishotLevel = 0;
     private int weaponType = 0; // 0 = default, 1 = 3-way
@@ -52,6 +52,7 @@ public class Player extends Sprite {
         if (y > BOARD_HEIGHT - height) {
             y = BOARD_HEIGHT - height;
         }
+        
     }
 
     public void keyPressed(KeyEvent e) {
@@ -98,9 +99,9 @@ public class Player extends Sprite {
     }
 
     public void upgradeSpeed() {
-        if (speedLevel < 4) {
+        if (speedLevel < 8) {//SPEEEEEEEEEEEEED -kev
             speedLevel++;
-            currentSpeed = 2 + speedLevel;
+            currentSpeed = 4 + speedLevel;
         }
     }
 
