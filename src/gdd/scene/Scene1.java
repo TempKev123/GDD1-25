@@ -178,16 +178,20 @@ public class Scene1 extends JPanel {
         // shot = new Shot();
     }
 
-    private void drawMap(Graphics g) {
+private void drawMap(Graphics g) {
+     // stars background
     int scrollOffset = (frame) % BLOCKWIDTH;
+    //int scrollOffset = BLOCKWIDTH - (frame % BLOCKWIDTH);
+
 
     int baseCol = (frame) / BLOCKWIDTH;
     int colsNeeded = (BOARD_WIDTH / BLOCKWIDTH) + 2;
 
     for (int screenCol = 0; screenCol < colsNeeded; screenCol++) {
-        int mapCol = (baseCol - screenCol + MAP[0].length) % MAP[0].length;
+        int mapCol = (baseCol + screenCol) % MAP[0].length;
 
-        int x = (screenCol * BLOCKWIDTH) - scrollOffset;
+        //int x = BOARD_WIDTH - ((screenCol * BLOCKWIDTH) - scrollOffset);
+        int x = ((screenCol * BLOCKWIDTH) - scrollOffset);
 
         if (x > BOARD_WIDTH || x < -BLOCKWIDTH) {
             continue;
@@ -200,38 +204,12 @@ public class Scene1 extends JPanel {
             }
         }
     }
-
     // HUD: Display power-up levels
 g.setColor(Color.CYAN);
 g.setFont(new Font("Arial", Font.BOLD, 14));
 g.drawString("Multishot Lv: " + player.getMultishotLevel(), 20, 40);
 g.drawString("Speed Lv: " + player.getSpeedLevel(), 20, 60);
-
-
-        /* old background
-    int scrollOffset = (frame) % BLOCKWIDTH;
-
-    int baseCol = (frame) / BLOCKWIDTH;
-    int colsNeeded = (BOARD_WIDTH / BLOCKWIDTH) + 2;
-
-    for (int screenCol = 0; screenCol < colsNeeded; screenCol++) {
-        int mapCol = (baseCol + screenCol) % MAP[0].length;
-
-        int x = BOARD_WIDTH - ((screenCol * BLOCKWIDTH) - scrollOffset);
-
-        if (x > BOARD_WIDTH || x < -BLOCKWIDTH) {
-            continue;
-        }
-
-        for (int row = 0; row < MAP.length; row++) {
-            if (MAP[row][mapCol] == 1) {
-                int y = row * BLOCKHEIGHT;
-                drawStarCluster(g, x, y, BLOCKWIDTH, BLOCKHEIGHT);
-            }
-        }
-    }*/
 }
-
 
     private void drawStarCluster(Graphics g, int x, int y, int width, int height) {
         // Set star color to white

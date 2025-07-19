@@ -29,15 +29,15 @@ public class Global {
     public static final int PLAYER_HEIGHT = 20; // Doubled from 10
 
     // Images
-    public static final String IMG_ENEMY = "src/images/alien.png";
-    public static final String IMG_PLAYER = "src/images/player.png";
-    public static final String IMG_SHOT = "src/images/shot.png";
-    public static final String IMG_EXPLOSION = "src/images/explosion.png";
-    public static final String IMG_TITLE = "src/images/title.png";
-    public static final String IMG_POWERUP_SPEEDUP = "src/images/powerup-s.png";
-    public static final String IMG_ALIEN2 = "src/images/jeff.png";
-    public static final String IMG_POWERUP_MULTISHOT = "src/images/powerup-s.png";
-    public static final String IMG_POWERUP_WEAPON = "src/images/powerup-s.png";
-    public static final String IMG_POWERUP_LAZER = "src/images/powerup-s.png";
+    public static final String IMG_ENEMY = "images/alien.png";
+    public static final String IMG_PLAYER = "images/player.png";
+    public static final String IMG_SHOT = "images/shot.png";
+    public static final String IMG_EXPLOSION = "images/explosion.png";
+    public static final String IMG_TITLE = "images/title.png";
+    public static final String IMG_POWERUP_SPEEDUP = "images/powerup-s.png";
+    public static final String IMG_ALIEN2 = "images/jeff.png";
+    public static final String IMG_POWERUP_MULTISHOT = "images/powerup-s.png";
+    public static final String IMG_POWERUP_WEAPON = "images/powerup-s.png";
+    public static final String IMG_POWERUP_LAZER = "images/powerup-s.png";
 
 }
