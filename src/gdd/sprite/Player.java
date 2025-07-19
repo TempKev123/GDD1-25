@@ -43,6 +43,7 @@ public class Player extends Sprite {
     // Movement logic
     public void act() {
         y += dy;
+        x += dx;
 
         if (y < 0) {
             y = 0;
@@ -63,6 +64,13 @@ public class Player extends Sprite {
         if (key == KeyEvent.VK_DOWN) {
             dy = currentSpeed;
         }
+         if (key == KeyEvent.VK_LEFT) {
+            dx = -currentSpeed;
+        }
+
+        if (key == KeyEvent.VK_RIGHT) {
+            dx = currentSpeed;
+        }
     }
 
     public void keyReleased(KeyEvent e) {
@@ -70,6 +78,9 @@ public class Player extends Sprite {
 
         if (key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN) {
             dy = 0;
+        }
+        if (key == KeyEvent.VK_LEFT || key == KeyEvent.VK_RIGHT) {
+            dx = 0;
         }
     }
 
