@@ -61,32 +61,19 @@ public class Scene1 extends JPanel {
     private int currentRow = -1;
     // TODO load this map from a file
     private int mapOffset = 0;
-    private final int[][] MAP = {
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-    };
+    private final int[][] MAP;
+
+    // random generates a map of 0 and 1s to determine star positions
+    {
+        int[][] tempMap = new int[24][12];
+        Random rand = new Random();
+        for (int i = 0; i < tempMap.length; i++) {
+            for (int j = 0; j < tempMap[i].length; j++) {
+                tempMap[i][j] = rand.nextInt(4); // random int: 0, 1, 2 or 3
+            }
+        }
+        MAP = tempMap;
+    }
 
     private HashMap<Integer, SpawnDetails> spawnMap = new HashMap<>();
     private AudioPlayer audioPlayer;
@@ -202,6 +189,14 @@ private void drawMap(Graphics g) {
                 int y = row * BLOCKHEIGHT;
                 drawStarCluster(g, x, y, BLOCKWIDTH, BLOCKHEIGHT);
             }
+            else if (MAP[row][mapCol] == 2) {
+                int y = row * BLOCKHEIGHT;
+                drawStarSmall(g, x, y, BLOCKWIDTH, BLOCKHEIGHT);
+            }
+            else if (MAP[row][mapCol] == 3) {
+                int y = row * BLOCKHEIGHT;
+                drawStar(g, x, y, BLOCKWIDTH, BLOCKHEIGHT);
+            }
         }
     }
     // HUD: Display power-up levels
@@ -213,7 +208,7 @@ g.drawString("Speed Lv: " + player.getSpeedLevel(), 20, 60);
 
     private void drawStarCluster(Graphics g, int x, int y, int width, int height) {
         // Set star color to white
-        g.setColor(Color.WHITE);
+        g.setColor(Color.PINK);
 
         // Draw multiple stars in a cluster pattern
         // Main star (larger)
@@ -222,6 +217,7 @@ g.drawString("Speed Lv: " + player.getSpeedLevel(), 20, 60);
         g.fillOval(centerX - 2, centerY - 2, 4, 4);
 
         // Smaller surrounding stars
+        g.setColor(Color.cyan);
         g.fillOval(centerX - 15, centerY - 10, 2, 2);
         g.fillOval(centerX + 12, centerY - 8, 2, 2);
         g.fillOval(centerX - 8, centerY + 12, 2, 2);
@@ -233,6 +229,28 @@ g.drawString("Speed Lv: " + player.getSpeedLevel(), 20, 60);
         g.fillOval(centerX - 5, centerY - 18, 1, 1);
         g.fillOval(centerX + 8, centerY + 20, 1, 1);
     }
+    private void drawStarSmall(Graphics g, int x, int y, int width, int height) {
+    // Set star color to white
+    
+
+    // Draw a single star (small white dot in the center of the given area)
+    int centerX = x + width / 2;
+    int centerY = y + height / 2;
+    g.setColor(Color.RED);
+    g.fillOval(centerX - 12, centerY - 1, 2, 2); // 2x2 pixel star
+    g.setColor(Color.ORANGE);
+    g.fillOval(centerX + 30, centerY +20, 3, 3); 
+    g.setColor(Color.PINK);
+    g.fillOval(centerX+10, centerY + 5, 4, 4);     
+}
+private void drawStar(Graphics g, int x, int y, int width, int height) {
+    // Set star color to white  
+    int centerX = x + width / 2;
+    int centerY = y + height / 2;    
+    g.setColor(Color.WHITE);
+    g.fillOval(centerX+17, centerY - 50, 4, 4);
+}
+
 
     private void drawAliens(Graphics g) {
 
