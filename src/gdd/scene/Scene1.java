@@ -4,10 +4,8 @@ import gdd.AudioPlayer;
 import gdd.Game;
 import static gdd.Global.*;
 import gdd.SpawnDetails;
-import gdd.powerup.MultiShot;
 import gdd.powerup.PowerUp;
 import gdd.powerup.SpeedUp;
-import gdd.powerup.WeaponUpgrade;
 import gdd.sprite.Alien1;
 import gdd.sprite.Alien2;
 import gdd.sprite.Enemy;
@@ -61,32 +59,20 @@ public class Scene1 extends JPanel {
     private int currentRow = -1;
     // TODO load this map from a file
     private int mapOffset = 0;
-    private final int[][] MAP = {
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-    };
+    
+    private final int[][] MAP;
+
+    // random generates a map of 0 and 1s to determine star positions
+    {
+        int[][] tempMap = new int[24][12];
+        Random rand = new Random();
+        for (int i = 0; i < tempMap.length; i++) {
+            for (int j = 0; j < tempMap[i].length; j++) {
+                tempMap[i][j] = rand.nextBoolean() ? 1 : 0;
+            }
+        }
+        MAP = tempMap;
+    }
 
     private HashMap<Integer, SpawnDetails> spawnMap = new HashMap<>();
     private AudioPlayer audioPlayer;
@@ -95,8 +81,8 @@ public class Scene1 extends JPanel {
 
     public Scene1(Game game) {
         this.game = game;
-        // initBoard();
-        // gameInit();
+        //initBoard();
+        //gameInit();
         loadSpawnDetails();
     }
 
@@ -112,9 +98,7 @@ public class Scene1 extends JPanel {
 
     private void loadSpawnDetails() {
         // TODO load this from a file
-        spawnMap.put(50, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, 100)); // spawn ขวา
-        spawnMap.put(350, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
-        spawnMap.put(450, new SpawnDetails("PowerUp-WeaponUpgrade", BOARD_WIDTH, 150));
+        spawnMap.put(50, new SpawnDetails("PowerUp-SpeedUp", 100, 0));
         spawnMap.put(200, new SpawnDetails("Alien1", 200, 0));
         spawnMap.put(300, new SpawnDetails("Alien1", 300, 0));
 
@@ -127,8 +111,10 @@ public class Scene1 extends JPanel {
         spawnMap.put(501, new SpawnDetails("Alien1", 150, 0));
         spawnMap.put(502, new SpawnDetails("Alien1", 200, 0));
         spawnMap.put(503, new SpawnDetails("Alien1", 350, 0));
-        spawnMap.put(600, new SpawnDetails("Alien2", BOARD_WIDTH, 100));
-        spawnMap.put(700, new SpawnDetails("Alien2", BOARD_WIDTH, 200));
+        spawnMap.put(600, new SpawnDetails("Alien2", 716, 10));
+        spawnMap.put(601, new SpawnDetails("Alien2", 736, 110));
+        spawnMap.put(602, new SpawnDetails("Alien2", 756, 210));
+        spawnMap.put(603, new SpawnDetails("Alien2", 776, 310));
 
     }
 
@@ -179,15 +165,19 @@ public class Scene1 extends JPanel {
     }
 
     private void drawMap(Graphics g) {
+     // stars background
     int scrollOffset = (frame) % BLOCKWIDTH;
+    //int scrollOffset = BLOCKWIDTH - (frame % BLOCKWIDTH);
+
 
     int baseCol = (frame) / BLOCKWIDTH;
     int colsNeeded = (BOARD_WIDTH / BLOCKWIDTH) + 2;
 
     for (int screenCol = 0; screenCol < colsNeeded; screenCol++) {
-        int mapCol = (baseCol - screenCol + MAP[0].length) % MAP[0].length;
+        int mapCol = (baseCol + screenCol) % MAP[0].length;
 
-        int x = (screenCol * BLOCKWIDTH) - scrollOffset;
+        //int x = BOARD_WIDTH - ((screenCol * BLOCKWIDTH) - scrollOffset);
+        int x = ((screenCol * BLOCKWIDTH) - scrollOffset);
 
         if (x > BOARD_WIDTH || x < -BLOCKWIDTH) {
             continue;
@@ -200,36 +190,6 @@ public class Scene1 extends JPanel {
             }
         }
     }
-
-    // HUD: Display power-up levels
-g.setColor(Color.CYAN);
-g.setFont(new Font("Arial", Font.BOLD, 14));
-g.drawString("Multishot Lv: " + player.getMultishotLevel(), 20, 40);
-g.drawString("Speed Lv: " + player.getSpeedLevel(), 20, 60);
-
-
-        /* old background
-    int scrollOffset = (frame) % BLOCKWIDTH;
-
-    int baseCol = (frame) / BLOCKWIDTH;
-    int colsNeeded = (BOARD_WIDTH / BLOCKWIDTH) + 2;
-
-    for (int screenCol = 0; screenCol < colsNeeded; screenCol++) {
-        int mapCol = (baseCol + screenCol) % MAP[0].length;
-
-        int x = BOARD_WIDTH - ((screenCol * BLOCKWIDTH) - scrollOffset);
-
-        if (x > BOARD_WIDTH || x < -BLOCKWIDTH) {
-            continue;
-        }
-
-        for (int row = 0; row < MAP.length; row++) {
-            if (MAP[row][mapCol] == 1) {
-                int y = row * BLOCKHEIGHT;
-                drawStarCluster(g, x, y, BLOCKWIDTH, BLOCKHEIGHT);
-            }
-        }
-    }*/
 }
 
 
@@ -399,27 +359,34 @@ g.drawString("Speed Lv: " + player.getSpeedLevel(), 20, 60);
 
     private void update() {
 
+        if (!player.isAlive()) {
+            inGame = false;
+            timer.stop();
+            message = "Game Over";
+            return;
+        }
+
 
         // Check enemy spawn
         // TODO this approach can only spawn one enemy at a frame
         SpawnDetails sd = spawnMap.get(frame);
         if (sd != null) {
+            // Create a new enemy based on the spawn details
             switch (sd.type) {
                 case "Alien1":
-                    enemies.add(new Alien1(BOARD_WIDTH, randomizer.nextInt(BOARD_HEIGHT - ALIEN_HEIGHT)));
+                    Enemy alien = new Alien1(BOARD_WIDTH, randomizer.nextInt(BOARD_HEIGHT - ALIEN_HEIGHT));
+                    enemies.add(alien);
                     break;
+                // Add more cases for different enemy types if needed
                 case "Alien2":
-                    enemies.add(new Alien2(sd.x, sd.y));
+                    Enemy alien2 = new Alien2(sd.x, sd.y);
+                    enemies.add(alien2);
                     break;
                 case "PowerUp-SpeedUp":
-                    powerups.add(new SpeedUp(sd.x, sd.y));
+                    // Handle speed up item spawn
+                    PowerUp speedUp = new SpeedUp(sd.x, sd.y);
+                    powerups.add(speedUp);
                     break;
-                case "PowerUp-MultiShot":
-                    powerups.add(new MultiShot(sd.x, sd.y));
-                    break;
-                case "PowerUp-WeaponUpgrade":
-                      powerups.add(new WeaponUpgrade(sd.x, sd.y));
-                      break;
                 default:
                     System.out.println("Unknown enemy type: " + sd.type);
                     break;
@@ -448,7 +415,7 @@ g.drawString("Speed Lv: " + player.getSpeedLevel(), 20, 60);
         // Enemies
         for (Enemy enemy : enemies) {
             if (enemy.isVisible()) {
-                enemy.act();
+                enemy.act(player);
             }
         }
 
@@ -470,12 +437,11 @@ for (Shot shot : shots) {
         int enemyX = enemy.getX();
         int enemyY = enemy.getY();
 
-        if (enemy.isVisible() && shotX >= enemyX && shotX <= enemyX + ALIEN_WIDTH
-                && shotY >= enemyY && shotY <= enemyY + ALIEN_HEIGHT) {
+        if (enemy.isVisible() && shot.collidesWith(enemy)) {
             var ii = new ImageIcon(IMG_EXPLOSION);
             enemy.setImage(ii.getImage());
             enemy.setDying(true);
-            explosions.add(new Explosion(enemyX, enemyY));
+            explosions.add(new Explosion(enemy.getX(), enemy.getY()));
             deaths++;
             shot.die();
             shotsToRemove.add(shot);
@@ -561,7 +527,8 @@ shots.removeAll(shotsToRemove);
         repaint();
     }
 
-     private class GameCycle implements ActionListener {
+    private class GameCycle implements ActionListener {
+
         @Override
         public void actionPerformed(ActionEvent e) {
             doGameCycle();
@@ -569,6 +536,7 @@ shots.removeAll(shotsToRemove);
     }
 
     private class TAdapter extends KeyAdapter {
+
         @Override
         public void keyReleased(KeyEvent e) {
             player.keyReleased(e);
@@ -576,51 +544,25 @@ shots.removeAll(shotsToRemove);
 
         @Override
         public void keyPressed(KeyEvent e) {
+            System.out.println("Scene2.keyPressed: " + e.getKeyCode());
+
             player.keyPressed(e);
+
+            int x = player.getX();
+            int y = player.getY();
 
             int key = e.getKeyCode();
 
             if (key == KeyEvent.VK_SPACE && inGame) {
-                if (shots.size() < 4) {
-                    int baseX = player.getX() + PLAYER_WIDTH;
-                    int baseY = player.getY() + PLAYER_HEIGHT / 2;
+    if (shots.size() < 4) {
+        int shotStartX = player.getX() + PLAYER_WIDTH;
+        int shotStartY = player.getY() + PLAYER_HEIGHT / 2;
+        Shot shot = new Shot(shotStartX, shotStartY);
+        shots.add(shot);
+    }
+}
 
-                    int weapon = player.getWeaponType();
-                    int level = player.getMultishotLevel();
 
-                    if (weapon == 1) {
-                        shots.add(new Shot(baseX, baseY - 10));
-                        shots.add(new Shot(baseX, baseY));
-                        shots.add(new Shot(baseX, baseY + 10));
-                    } else {
-                        switch (level) {
-                            case 0 -> shots.add(new Shot(baseX, baseY));
-                            case 1 -> {
-                                shots.add(new Shot(baseX, baseY - 10));
-                                shots.add(new Shot(baseX, baseY + 10));
-                            }
-                            case 2 -> {
-                                shots.add(new Shot(baseX, baseY - 15));
-                                shots.add(new Shot(baseX, baseY));
-                                shots.add(new Shot(baseX, baseY + 15));
-                            }
-                            case 3 -> {
-                                shots.add(new Shot(baseX, baseY - 20));
-                                shots.add(new Shot(baseX, baseY - 10));
-                                shots.add(new Shot(baseX, baseY));
-                                shots.add(new Shot(baseX, baseY + 10));
-                                shots.add(new Shot(baseX, baseY + 20));
-                            }
-                            case 4 -> {
-                                for (int i = -30; i <= 30; i += 10) {
-                                    shots.add(new Shot(baseX, baseY + i));
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
-    } 
-
-} 
+    }
+}
