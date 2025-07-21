@@ -14,6 +14,7 @@ public class WeaponUpgrade extends PowerUp {
     @Override
     public void upgrade(Player player) {
         player.setWeaponType(1); // Set to 3-way
+        this.die();
     }
 
     @Override
