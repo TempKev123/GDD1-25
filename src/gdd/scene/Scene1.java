@@ -15,6 +15,7 @@ import gdd.sprite.Explosion;
 import gdd.sprite.Player;
 import gdd.sprite.Shot;
 import java.awt.Color;
+import java.awt.Image;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -39,6 +40,7 @@ public class Scene1 extends JPanel {
     private List<Explosion> explosions;
     private List<Shot> shots;
     private Player player;
+    private int gameOverCountdown = -1;
     // private Shot shot;
 
     final int BLOCKHEIGHT = 50;
@@ -286,7 +288,7 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
 
     private void drawPlayer(Graphics g) {
 
-        if (player.isVisible()) {
+        if (player.isVisible() && !player.isDying()) {
 
             g.drawImage(player.getImage(), player.getX(), player.getY(), this);
         }
@@ -294,7 +296,6 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
         if (player.isDying()) {
 
             player.die();
-            inGame = false;
         }
     }
 
@@ -327,9 +328,8 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
             if (explosion.isVisible()) {
                 g.drawImage(explosion.getImage(), explosion.getX(), explosion.getY(), this);
                 explosion.visibleCountDown();
-                if (!explosion.isVisible()) {
-                    toRemove.add(explosion);
-                }
+            } else {
+                toRemove.add(explosion);
             }
         }
 
@@ -445,6 +445,45 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
         for (Enemy enemy : enemies) {
             if (enemy.isVisible()) {
                 enemy.act();
+
+                //Check collision with player
+                if (player.collidesWith(enemy)){
+                    var ii = new ImageIcon(IMG_EXPLOSION);
+                    Image explosionImage = ii.getImage();
+
+                    // 🔸 Get player center
+                    int centerX = player.getX() + player.getImage().getWidth(null) / 2;
+                    int centerY = player.getY() + player.getImage().getHeight(null) / 2;
+
+                    // 🔸 Scale explosion
+                    int scaledWidth = explosionImage.getWidth(null) * 2;  // 2x size
+                    int scaledHeight = explosionImage.getHeight(null) * 2;
+                    Image scaledExplosion = explosionImage.getScaledInstance(
+                        scaledWidth, scaledHeight, java.awt.Image.SCALE_SMOOTH
+                    );
+
+                    // 🔸 Position explosion at center
+                    int explosionX = centerX - scaledWidth / 2;
+                    int explosionY = centerY - scaledHeight / 2;
+
+                    // 🔸 Add explosion
+                    explosions.add(new Explosion(explosionX, explosionY, scaledExplosion));
+
+                    // 🔸 Mark player as dying (triggers Game Over)
+                    player.setDying(true);
+                    gameOverCountdown = 60;
+                }
+            }
+        }
+
+        for (Explosion explosion : explosions) {
+            explosion.act();
+        }
+
+        if (gameOverCountdown > 0) {
+            gameOverCountdown--;
+            if (gameOverCountdown == 0) {
+                inGame = false;
             }
         }
 
@@ -468,10 +507,26 @@ for (Shot shot : shots) {
 
         if (enemy.isVisible() && shotX >= enemyX && shotX <= enemyX + ALIEN_WIDTH
                 && shotY >= enemyY && shotY <= enemyY + ALIEN_HEIGHT) {
+
             var ii = new ImageIcon(IMG_EXPLOSION);
+            Image explosionImage = ii.getImage();
+            
+            int scaledWidth = explosionImage.getWidth(null) * 2;
+            int scaledHeight = explosionImage.getHeight(null) * 2;
+            Image scaledExplosion = explosionImage.getScaledInstance(
+                scaledWidth, scaledHeight, java.awt.Image.SCALE_SMOOTH);                
+
+            int centerX = enemyX + ALIEN_WIDTH / 2;
+            int centerY = enemyY + ALIEN_HEIGHT / 2;
+
+            int explosionX = centerX - scaledWidth / 2;
+            int explosionY = centerY - scaledHeight / 2;        
+
             enemy.setImage(ii.getImage());
             enemy.setDying(true);
-            explosions.add(new Explosion(enemyX, enemyY));
+
+            explosions.add(new Explosion(explosionX, explosionY, scaledExplosion));
+            
             deaths++;
             shot.die();
             shotsToRemove.add(shot);
