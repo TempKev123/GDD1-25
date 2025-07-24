@@ -1,9 +1,9 @@
 package gdd.sprite;
 
 import static gdd.Global.*;
-import javax.swing.ImageIcon;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.ImageIcon;
 
 public class Alien1 extends Enemy {
 
@@ -53,4 +53,11 @@ public class Alien1 extends Enemy {
     public List<EnemyBullet> getBullets() {
         return bullets;
     }
+
+    @Override
+public void die() {
+    super.die(); // เรียกจาก Sprite
+    bullets.clear(); // 💥 ล้างกระสุนที่ยังเหลืออยู่
+}
+
 }

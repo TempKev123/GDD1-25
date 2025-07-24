@@ -10,17 +10,16 @@ import gdd.powerup.SpeedUp;
 import gdd.powerup.WeaponUpgrade;
 import gdd.sprite.Alien1;
 import gdd.sprite.Alien2;
-import gdd.sprite.Jeff;
 import gdd.sprite.Enemy;
 import gdd.sprite.EnemyBullet;
 import gdd.sprite.Explosion;
 import gdd.sprite.Player;
 import gdd.sprite.Shot;
 import java.awt.Color;
-import java.awt.Image;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -100,67 +99,81 @@ public class Scene1 extends JPanel {
             System.err.println("Error initializing audio player: " + e.getMessage());
         }
     }
-
-    private void loadSpawnDetails() {
-        //there are 18600 frames in 5 minuites
+private void loadSpawnDetails() {
+    //there are 18600 frames in 5 minuites
         // TODO load this from a file
         /*spawnMap.put(51, new SpawnDetails("Jeff", 500, 1)); // spawn jeff1
         spawnMap.put(52, new SpawnDetails("Jeff", 500, 200)); // spawn jeff2
         spawnMap.put(53, new SpawnDetails("Jeff", 500, 450)); // spawn jeff3*/
-        spawnMap.put(50, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, 100)); // spawn ขวา
-        spawnMap.put(350, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
-        spawnMap.put(200, new SpawnDetails("Alien1", 100, 0));
-        spawnMap.put(400, new SpawnDetails("Alien1", 300, 0));
-        spawnMap.put(401, new SpawnDetails("Alien2", BOARD_WIDTH, 100));
-        spawnMap.put(402, new SpawnDetails("Alien2", BOARD_WIDTH, 200));
-        
-        spawnMap.put(405, new SpawnDetails("Alien1", 400, 0));
-        spawnMap.put(406, new SpawnDetails("Alien1", 450, 0));
-        spawnMap.put(047, new SpawnDetails("Alien1", 500, 0));
-        spawnMap.put(408, new SpawnDetails("Alien1", 550, 0));
-        
-        
-        spawnMap.put(441, new SpawnDetails("Alien2", BOARD_WIDTH, 390));
-        spawnMap.put(442, new SpawnDetails("Alien2", BOARD_WIDTH, 100));
-        spawnMap.put(443, new SpawnDetails("Alien2", BOARD_WIDTH, 400));
-        spawnMap.put(444, new SpawnDetails("Alien2", BOARD_WIDTH, 20));
-        spawnMap.put(445, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, 400));
-        spawnMap.put(446, new SpawnDetails("Alien1", 200, 0));
-        spawnMap.put(447, new SpawnDetails("Alien2", BOARD_WIDTH, 500));
-        spawnMap.put(448, new SpawnDetails("Alien2", BOARD_WIDTH, 200));
-        spawnMap.put(449, new SpawnDetails("Alien1", 300, 0));
-        spawnMap.put(451, new SpawnDetails("Alien2", BOARD_WIDTH, 300));
-        spawnMap.put(452, new SpawnDetails("Alien2", BOARD_WIDTH, 400));
-        spawnMap.put(453, new SpawnDetails("Alien2", BOARD_WIDTH, 30));
+    Random rand = new Random();
 
-        spawnMap.put(450, new SpawnDetails("PowerUp-WeaponUpgrade", BOARD_WIDTH, 150));
-        spawnMap.put(458, new SpawnDetails("Alien1", 550, 0));
-        spawnMap.put(448, new SpawnDetails("Alien1", 450, 0));
-        spawnMap.put(459, new SpawnDetails("Alien1", 50, 0));
-        spawnMap.put(460, new SpawnDetails("Alien1", 150, 0));
+    // ───── PowerUps ─────
+    spawnMap.put(50, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, 100));
+    spawnMap.put(350, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
+    spawnMap.put(450, new SpawnDetails("PowerUp-WeaponUpgrade", BOARD_WIDTH, 150));
+    spawnMap.put(805, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, 300));
 
-        spawnMap.put(500, new SpawnDetails("Alien1", 100, 0));
-        spawnMap.put(501, new SpawnDetails("Alien1", 150, 0));
-        spawnMap.put(502, new SpawnDetails("Alien1", 200, 0));
-        spawnMap.put(503, new SpawnDetails("Alien1", 350, 0));
-        spawnMap.put(600, new SpawnDetails("Alien2", BOARD_WIDTH, 100));
-        spawnMap.put(700, new SpawnDetails("Alien2", BOARD_WIDTH, 200));
-        spawnMap.put(730, new SpawnDetails("Alien2", BOARD_WIDTH, 200));
-        spawnMap.put(750, new SpawnDetails("Alien2", BOARD_WIDTH, 200));
+    // ───── Alien2 ─────
+    int[] alien2Frames = {401, 402, 441, 442, 443, 444, 447, 448, 451, 452, 453, 600, 700, 730, 750};
+    int[] alien2Y =      {100, 200, 390, 100, 400,  20, 500, 200, 300, 400,  30, 100, 200, 200, 200};
 
-        spawnMap.put(800, new SpawnDetails("Alien1", 300, 0));
-        spawnMap.put(801, new SpawnDetails("Alien1", 150, 0));
-        spawnMap.put(802, new SpawnDetails("Alien1", 200, 0));
-        spawnMap.put(803, new SpawnDetails("Alien1", 350, 0));
-        spawnMap.put(805, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, 300));
-
-
-
-
-        //spawnMap.put(18600, new SpawnDetails("nextstage", BOARD_WIDTH, 200));
-
-
+    for (int i = 0; i < alien2Frames.length; i++) {
+        spawnMap.put(alien2Frames[i], new SpawnDetails("Alien2", BOARD_WIDTH, alien2Y[i]));
     }
+
+    // ───── Alien1: แบบซิกแซก ─────
+    int[] zigzagFrames = {200, 210, 220, 230, 240, 250};
+    int baseY = 100;
+    int[] offsetY = {0, 20, -15, 30, -10, 25};
+
+    for (int i = 0; i < zigzagFrames.length; i++) {
+        int x = BOARD_WIDTH; // spawn ด้านขวา
+        int y = baseY + offsetY[i % offsetY.length];
+        spawnMap.put(zigzagFrames[i], new SpawnDetails("Alien1", x, y));
+    }
+
+    // ───── Alien1: แบบสุ่ม Y ─────
+    int[] randomYFrames = {300, 310, 320, 330, 340};
+    for (int frame : randomYFrames) {
+        int y = 50 + rand.nextInt(200); // Y 50–250
+        spawnMap.put(frame, new SpawnDetails("Alien1", BOARD_WIDTH, y));
+    }
+
+    // ───── Alien1: Wave แนวนอน ─────
+    int[] waveFrames = {400, 410, 420, 430, 440};
+    int waveBaseY = 150;
+
+    for (int i = 0; i < waveFrames.length; i++) {
+        int x = BOARD_WIDTH;
+        int y = waveBaseY + (int)(30 * Math.sin(i * Math.PI / 3)); // sin wave
+        spawnMap.put(waveFrames[i], new SpawnDetails("Alien1", x, y));
+    }
+
+    // ───── Alien1: แถวเดียวคงที่ ─────
+    int[] rowFrames = {500, 505, 510, 515, 520};
+    int rowY = 220;
+
+    for (int frame : rowFrames) {
+        spawnMap.put(frame, new SpawnDetails("Alien1", BOARD_WIDTH, rowY));
+    }
+
+    // ───── Alien1: กระจายหลากหลาย ─────
+    int[] spreadFrames = {600, 610, 620, 630};
+    int[] spreadY = {80, 160, 240, 120};
+
+    for (int i = 0; i < spreadFrames.length; i++) {
+        spawnMap.put(spreadFrames[i], new SpawnDetails("Alien1", BOARD_WIDTH, spreadY[i]));
+    }
+
+    // ───── Alien1: แบบ delay ทยอย spawn ─────
+    int delayY = 180;
+    for (int i = 0; i < 5; i++) {
+        int frame = 700 + (i * 20); // 700, 720, 740...
+        spawnMap.put(frame, new SpawnDetails("Alien1", BOARD_WIDTH, delayY + i * 10));
+    }
+}
+
+
 
     private void initBoard() {
 
@@ -512,27 +525,28 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
         // ┌────────────────────────────────────────┐
         // │ Alien1 ยิงกระสุนแนวตรง (ไม่เล็งผู้เล่น) │
         // └────────────────────────────────────────┘
-        if (enemy instanceof Alien1 alien1) {
-            if (frame % 60 == 0) {
-                alien1.fire(); // 🔫 ยิงกระสุนแนวตรง
-            }
+     if (enemy instanceof Alien1 alien1) {
+    if (alien1.isVisible() && frame % 60 == 0) {
+        alien1.fire(); // ✅ ยิงเฉพาะถ้ายังไม่ตาย
+    }
 
-            for (EnemyBullet bullet : alien1.getBullets()) {
-                if (bullet.isVisible()) {
-                    bullet.act();
+    for (EnemyBullet bullet : alien1.getBullets()) {
+        if (bullet.isVisible()) {
+            bullet.act();
 
-                    if (bullet.collidesWith(player)) {
-                        bullet.die();
-                        player.setDying(true);
-                        explosions.add(new Explosion(
-                                player.getX(), player.getY(),
-                                new ImageIcon(IMG_EXPLOSION).getImage()
-                        ));
-                        gameOverCountdown = 60;
-                    }
-                }
+            if (bullet.collidesWith(player)) {
+                bullet.die();
+                player.setDying(true);
+                explosions.add(new Explosion(
+                        player.getX(), player.getY(),
+                        new ImageIcon(IMG_EXPLOSION).getImage()
+                ));
+                gameOverCountdown = 60;
             }
         }
+    }
+}
+
     }
 
     // ┌────────────────┐
