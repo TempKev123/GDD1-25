@@ -10,6 +10,7 @@ import gdd.powerup.SpeedUp;
 import gdd.powerup.WeaponUpgrade;
 import gdd.sprite.Alien1;
 import gdd.sprite.Alien2;
+import gdd.sprite.Jeff;
 import gdd.sprite.Enemy;
 import gdd.sprite.Explosion;
 import gdd.sprite.Player;
@@ -100,17 +101,42 @@ public class Scene1 extends JPanel {
     }
 
     private void loadSpawnDetails() {
+        //there are 18600 frames in 5 minuites
         // TODO load this from a file
+        /*spawnMap.put(51, new SpawnDetails("Jeff", 500, 1)); // spawn jeff1
+        spawnMap.put(52, new SpawnDetails("Jeff", 500, 200)); // spawn jeff2
+        spawnMap.put(53, new SpawnDetails("Jeff", 500, 450)); // spawn jeff3*/
         spawnMap.put(50, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, 100)); // spawn ขวา
         spawnMap.put(350, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
-        spawnMap.put(450, new SpawnDetails("PowerUp-WeaponUpgrade", BOARD_WIDTH, 150));
-        spawnMap.put(200, new SpawnDetails("Alien1", 200, 0));
-        spawnMap.put(300, new SpawnDetails("Alien1", 300, 0));
+        spawnMap.put(200, new SpawnDetails("Alien1", 100, 0));
+        spawnMap.put(400, new SpawnDetails("Alien1", 300, 0));
+        spawnMap.put(401, new SpawnDetails("Alien2", BOARD_WIDTH, 100));
+        spawnMap.put(402, new SpawnDetails("Alien2", BOARD_WIDTH, 200));
+        
+        spawnMap.put(405, new SpawnDetails("Alien1", 400, 0));
+        spawnMap.put(406, new SpawnDetails("Alien1", 450, 0));
+        spawnMap.put(047, new SpawnDetails("Alien1", 500, 0));
+        spawnMap.put(408, new SpawnDetails("Alien1", 550, 0));
+        
+        
+        spawnMap.put(441, new SpawnDetails("Alien2", BOARD_WIDTH, 390));
+        spawnMap.put(442, new SpawnDetails("Alien2", BOARD_WIDTH, 100));
+        spawnMap.put(443, new SpawnDetails("Alien2", BOARD_WIDTH, 400));
+        spawnMap.put(444, new SpawnDetails("Alien2", BOARD_WIDTH, 20));
+        spawnMap.put(445, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, 400));
+        spawnMap.put(446, new SpawnDetails("Alien1", 200, 0));
+        spawnMap.put(447, new SpawnDetails("Alien2", BOARD_WIDTH, 500));
+        spawnMap.put(448, new SpawnDetails("Alien2", BOARD_WIDTH, 200));
+        spawnMap.put(449, new SpawnDetails("Alien1", 300, 0));
+        spawnMap.put(451, new SpawnDetails("Alien2", BOARD_WIDTH, 300));
+        spawnMap.put(452, new SpawnDetails("Alien2", BOARD_WIDTH, 400));
+        spawnMap.put(453, new SpawnDetails("Alien2", BOARD_WIDTH, 30));
 
-        spawnMap.put(400, new SpawnDetails("Alien1", 400, 0));
-        spawnMap.put(401, new SpawnDetails("Alien1", 450, 0));
-        spawnMap.put(402, new SpawnDetails("Alien1", 500, 0));
-        spawnMap.put(403, new SpawnDetails("Alien1", 550, 0));
+        spawnMap.put(450, new SpawnDetails("PowerUp-WeaponUpgrade", BOARD_WIDTH, 150));
+        spawnMap.put(458, new SpawnDetails("Alien1", 550, 0));
+        spawnMap.put(448, new SpawnDetails("Alien1", 450, 0));
+        spawnMap.put(459, new SpawnDetails("Alien1", 50, 0));
+        spawnMap.put(460, new SpawnDetails("Alien1", 150, 0));
 
         spawnMap.put(500, new SpawnDetails("Alien1", 100, 0));
         spawnMap.put(501, new SpawnDetails("Alien1", 150, 0));
@@ -118,6 +144,20 @@ public class Scene1 extends JPanel {
         spawnMap.put(503, new SpawnDetails("Alien1", 350, 0));
         spawnMap.put(600, new SpawnDetails("Alien2", BOARD_WIDTH, 100));
         spawnMap.put(700, new SpawnDetails("Alien2", BOARD_WIDTH, 200));
+        spawnMap.put(730, new SpawnDetails("Alien2", BOARD_WIDTH, 200));
+        spawnMap.put(750, new SpawnDetails("Alien2", BOARD_WIDTH, 200));
+
+        spawnMap.put(800, new SpawnDetails("Alien1", 300, 0));
+        spawnMap.put(801, new SpawnDetails("Alien1", 150, 0));
+        spawnMap.put(802, new SpawnDetails("Alien1", 200, 0));
+        spawnMap.put(803, new SpawnDetails("Alien1", 350, 0));
+        spawnMap.put(805, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, 300));
+
+
+
+
+        //spawnMap.put(18600, new SpawnDetails("nextstage", BOARD_WIDTH, 200));
+
 
     }
 
@@ -204,6 +244,7 @@ private void drawMap(Graphics g) {
     // HUD: Display power-up levels
 g.setColor(Color.CYAN);
 g.setFont(new Font("Arial", Font.BOLD, 14));
+
 g.drawString("Multishot Lv: " + player.getMultishotLevel(), 20, 40);
 g.drawString("Speed Lv: " + player.getSpeedLevel(), 20, 60);
 }
@@ -406,6 +447,9 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
                     break;
                 case "Alien2":
                     enemies.add(new Alien2(sd.x, sd.y));
+                    break;
+                case "Jeff":
+                    enemies.add(new Jeff(sd.x, sd.y));
                     break;
                 case "PowerUp-SpeedUp":
                     powerups.add(new SpeedUp(sd.x, sd.y));
