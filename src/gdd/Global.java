@@ -29,20 +29,20 @@ public class Global {
     public static final int PLAYER_HEIGHT = 20; // Doubled from 10
 
     // Images
-    public static final String IMG_ENEMY = "images/alien.png";
-    public static final String IMG_PLAYER = "images/ship.png";
-    public static final String IMG_SHOT = "images/fire1.png";
-    public static final String IMG_EXPLOSION = "images/explosion.png";
-    public static final String IMG_TITLE = "images/title.png";
-    public static final String IMG_POWERUP_SPEEDUP = "images/speedup.png";
-    public static final String IMG_ALIEN2 = "images/alien2.png";
-    public static final String IMG_POWERUP_MULTISHOT = "images/multishot.png";
-    public static final String IMG_POWERUP_WEAPON = "images/upgrade.png";
-    public static final String IMG_POWERUP_LAZER = "images/upgrade.png";
-    public static final String IMG_BOSS1 = "images/jeff.png";
-    public static final String IMG_BOSS2 = "images/jeff_mech_head.png";
-    public static final String IMG_BOSS3 = "images/jeff_bone_head.png";
-    public static final String IMG_BOSS_NECK = "images/jeff_neck.png";
-
+    public static final String IMG_ENEMY = "GDD1-25\\src\\images\\alien.png";
+    public static final String IMG_PLAYER = "GDD1-25\\src\\images\\ship.png";
+    public static final String IMG_SHOT = "GDD1-25\\src\\images\\fire1.png";
+    public static final String IMG_EXPLOSION = "GDD1-25\\src\\images\\explosion.png";
+    public static final String IMG_TITLE = "GDD1-25\\src\\images\\title.png";
+    public static final String IMG_POWERUP_SPEEDUP = "GDD1-25\\src\\images\\speedup.png";
+    public static final String IMG_ALIEN2 = "GDD1-25\\src\\images\\alien2.png";
+    public static final String IMG_POWERUP_MULTISHOT = "GDD1-25\\src\\images\\multishot.png";
+    public static final String IMG_POWERUP_WEAPON = "GDD1-25\\src\\images\\upgrade.png";
+    public static final String IMG_POWERUP_LAZER = "GDD1-25\\src\\images\\upgrade.png";
+    public static final String IMG_BOSS1 = "GDD1-25\\src\\images\\jeff.png";
+    public static final String IMG_BOSS2 = "GDD1-25\\src\\images\\jeff_mech_head.png";
+    public static final String IMG_BOSS3 = "GDD1-25\\src\\images\\jeff_bone_head.png";
+    public static final String IMG_BOSS_NECK = "GDD1-25\\src\\images\\jeff_neck.png";
+    public static final String IMG_ENEMY_BULLET = "GDD1-25\\src\\images\\bomb.png";
 
 }
