@@ -9,6 +9,7 @@ public class Alien1 extends Enemy {
 
     private static final int ENEMY_SPEED = 2;
     private List<EnemyBullet> bullets = new ArrayList<>();
+    private boolean stopAtCenter = false; // ✅ เพิ่มตัวแปรนี้
 
     public Alien1(int x, int y) {
         super(x, y);
@@ -28,36 +29,41 @@ public class Alien1 extends Enemy {
     }
 
     // 👾 ศัตรูเคลื่อนแนวนอน (ขวา → ซ้าย)
+    @Override
     public void act() {
-        this.x -= ENEMY_SPEED;
-        if (this.x + getImage().getWidth(null) < 0) {
-            die();
+        if (stopAtCenter && x <= BOARD_WIDTH / 2) {
+            x = BOARD_WIDTH / 2;
+            return; // ❗ หยุดเมื่อถึงกลาง
         }
 
-        // move bullets
+        x -= ENEMY_SPEED;
+
         for (EnemyBullet bullet : bullets) {
-            bullet.act();
+            if (bullet.isVisible()) bullet.act();
+        }
+
+        if (x + getImage().getWidth(null) < 0) {
+            die();
         }
     }
 
-   public void fire() {
-    int startX = this.x;
-    int startY = this.y + this.getImage().getHeight(null) / 2;
-    bullets.add(new EnemyBullet(startX, startY));
-}
-
-
-
-
+    public void fire() {
+        int startX = this.x;
+        int startY = this.y + this.getImage().getHeight(null) / 2;
+        bullets.add(new EnemyBullet(startX, startY));
+    }
 
     public List<EnemyBullet> getBullets() {
         return bullets;
     }
 
-    @Override
-public void die() {
-    super.die(); // เรียกจาก Sprite
-    bullets.clear(); // 💥 ล้างกระสุนที่ยังเหลืออยู่
-}
+    public void setStopAtCenter(boolean stop) {
+        this.stopAtCenter = stop;
+    }
 
+    @Override
+    public void die() {
+        super.die();
+        bullets.clear(); // 💥 ล้างกระสุนเมื่อ Alien ตาย
+    }
 }

@@ -66,6 +66,27 @@ public class Scene1 extends JPanel {
     private int mapOffset = 0;
     private final int[][] MAP;
 
+    private int currentStage = 1;
+    private boolean inTransition = false;
+    private int transitionTimer = 0;
+    private final int TRANSITION_DURATION = 180; // 3 วินาที @ 60fps
+private List<Enemy> currentGroup = new ArrayList<>();
+
+  private List<List<Enemy>> alienGroups = new ArrayList<>();
+
+
+  private int currentGroupIndex = 0;
+  private boolean waitingForNextGroup = false;
+  private int waitTimer = 0;
+  private final int WAIT_DURATION = 120; // 2 วินาที
+
+  private int alienShootCooldown = 0;
+  private final int SHOOT_DELAY = 30; // ยิงทีละลำทุก 0.5 วิ
+  private int shooterIndex = 0;
+
+
+
+
     // random generates a map of 0 and 1s to determine star positions
     {
         int[][] tempMap = new int[24][12];
@@ -88,6 +109,7 @@ public class Scene1 extends JPanel {
         // initBoard();
         // gameInit();
         loadSpawnDetails();
+        loadAlienGroups();
     }
 
     private void initAudio() {
@@ -99,6 +121,50 @@ public class Scene1 extends JPanel {
             System.err.println("Error initializing audio player: " + e.getMessage());
         }
     }
+
+private void loadAlienGroups() {
+    int groupCount = 5;
+
+    for (int g = 0; g < groupCount; g++) {
+        List<Enemy> group = new ArrayList<>();
+
+        if (g == 4) {
+            // 👑 กลุ่มสุดท้าย → Boss (เปลี่ยนตาม stage ได้)
+            Alien2 boss = new Alien2(BOARD_WIDTH, 180);
+            group.add(boss);
+        } else {
+            int x = BOARD_WIDTH;
+            int startY = 100;
+            int gapY = 60;
+
+            for (int i = 0; i < 5; i++) {
+                int y = startY + (i * gapY);
+                Alien1 alien = new Alien1(x, y);
+                alien.setStopAtCenter(true);
+
+                // ✨ เพิ่มความแตกต่างตาม stage โดยไม่เปลี่ยนรูปแบบ
+                if (currentStage == 2) {
+                    // ตัวอย่าง: เพิ่มความเร็ว หรือเตรียมยิง 2 นัด
+                    // alien.setSpeed(alien.getSpeed() + 1); // ถ้ามี method
+                    // alien.enableDoubleShot(); // ถ้ามีระบบยิงหลายแบบ
+                }
+
+                group.add(alien);
+            }
+        }
+
+        alienGroups.add(group);
+    }
+}
+
+
+
+
+
+
+
+
+
 private void loadSpawnDetails() {
     //there are 18600 frames in 5 minuites
         // TODO load this from a file
@@ -209,6 +275,9 @@ private void loadSpawnDetails() {
         powerups = new ArrayList<>();
         explosions = new ArrayList<>();
         shots = new ArrayList<>();
+        loadSpawnDetails();   // โหลด PowerUps
+        loadAlienGroups();    // โหลด wave-based enemy
+
 
         // for (int i = 0; i < 4; i++) {
         // for (int j = 0; j < 6; j++) {
@@ -263,29 +332,35 @@ g.drawString("Multishot Lv: " + player.getMultishotLevel(), 20, 40);
 g.drawString("Speed Lv: " + player.getSpeedLevel(), 20, 60);
 }
 
-    private void drawStarCluster(Graphics g, int x, int y, int width, int height) {
-        // Set star color to white
-        g.setColor(Color.PINK);
+   private void drawStarCluster(Graphics g, int x, int y, int width, int height) {
+    int centerX = x + width / 2;
+    int centerY = y + height / 2;
 
-        // Draw multiple stars in a cluster pattern
-        // Main star (larger)
-        int centerX = x + width / 2;
-        int centerY = y + height / 2;
-        g.fillOval(centerX - 2, centerY - 2, 4, 4);
-
-        // Smaller surrounding stars
-        g.setColor(Color.cyan);
-        g.fillOval(centerX - 15, centerY - 10, 2, 2);
-        g.fillOval(centerX + 12, centerY - 8, 2, 2);
-        g.fillOval(centerX - 8, centerY + 12, 2, 2);
-        g.fillOval(centerX + 10, centerY + 15, 2, 2);
-
-        // Tiny stars for more detail
-        g.fillOval(centerX - 20, centerY + 5, 1, 1);
-        g.fillOval(centerX + 18, centerY - 15, 1, 1);
-        g.fillOval(centerX - 5, centerY - 18, 1, 1);
-        g.fillOval(centerX + 8, centerY + 20, 1, 1);
+    // 🌈 เปลี่ยนสีหลักของดาวตาม currentStage
+    switch (currentStage) {
+        case 1 -> g.setColor(Color.PINK);
+        case 2 -> g.setColor(Color.GREEN);
+        case 3 -> g.setColor(Color.CYAN);
+        default -> g.setColor(Color.YELLOW);
     }
+
+    // Main star (larger)
+    g.fillOval(centerX - 2, centerY - 2, 4, 4);
+
+    // Smaller surrounding stars
+    g.setColor(Color.cyan);
+    g.fillOval(centerX - 15, centerY - 10, 2, 2);
+    g.fillOval(centerX + 12, centerY - 8, 2, 2);
+    g.fillOval(centerX - 8, centerY + 12, 2, 2);
+    g.fillOval(centerX + 10, centerY + 15, 2, 2);
+
+    // Tiny stars for more detail
+    g.fillOval(centerX - 20, centerY + 5, 1, 1);
+    g.fillOval(centerX + 18, centerY - 15, 1, 1);
+    g.fillOval(centerX - 5, centerY - 18, 1, 1);
+    g.fillOval(centerX + 8, centerY + 20, 1, 1);
+}
+
     private void drawStarSmall(Graphics g, int x, int y, int width, int height) {
     // Set star color to white
     
@@ -411,6 +486,14 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
 
         g.setColor(Color.green);
 
+
+        if (inTransition) {
+    g.setColor(Color.YELLOW);
+    g.setFont(new Font("Arial", Font.BOLD, 28));
+    g.drawString("STAGE " + (currentStage + 1), BOARD_WIDTH / 2 - 70, BOARD_HEIGHT / 2);
+}
+
+
         if (inGame) {
 
             drawMap(g);  // Draw background stars first
@@ -452,39 +535,57 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
                 BOARD_WIDTH / 2);
     }
 
-  private void update() {
-    // ┌──────────────┐
-    // │ Spawn Entities │
-    // └──────────────┘
-    SpawnDetails sd = spawnMap.get(frame);
-    if (sd != null) {
-        switch (sd.type) {
-            case "Alien1" -> enemies.add(new Alien1(sd.x, sd.y));
-            case "Alien2" -> enemies.add(new Alien2(sd.x, sd.y));
-            case "PowerUp-SpeedUp" -> powerups.add(new SpeedUp(sd.x, sd.y));
-            case "PowerUp-MultiShot" -> powerups.add(new MultiShot(sd.x, sd.y));
-            case "PowerUp-WeaponUpgrade" -> powerups.add(new WeaponUpgrade(sd.x, sd.y));
-            default -> System.out.println("Unknown enemy type: " + sd.type);
+private void update() {
+    // ───── กลุ่มศัตรู wave-based ─────
+   if (!waitingForNextGroup && currentGroupIndex < alienGroups.size()) {
+    currentGroup = alienGroups.get(currentGroupIndex);
+    enemies.addAll(currentGroup);
+    waitingForNextGroup = true;
+}
+
+// ตรวจว่าศัตรูในกลุ่มตายหมดหรือยัง
+if (waitingForNextGroup) {
+    boolean allDead = true;
+    for (Enemy e : currentGroup) {
+        if (e.isVisible()) {
+            allDead = false;
+            break;
         }
     }
 
-    // ┌──────────────┐
-    // │ Win Condition │
-    // └──────────────┘
-    if (deaths == NUMBER_OF_ALIENS_TO_DESTROY) {
-        inGame = false;
-        timer.stop();
-        message = "Game won!";
-    }
+    if (allDead) {
+        waitTimer++;
+        if (waitTimer >= WAIT_DURATION) {
+            waitTimer = 0;
+            waitingForNextGroup = false;
+            currentGroupIndex++;
 
-    // ┌──────────────┐
-    // │ Player Update │
-    // └──────────────┘
+            enemies.removeAll(currentGroup); // ✅ ล้างกลุ่มเดิมทิ้ง (ทุกชนิดศัตรู)
+        }
+    }
+}
+
+
+
+// ───── Spawn PowerUps จาก spawnMap ─────
+SpawnDetails sd = spawnMap.get(frame);
+if (sd != null) {
+    switch (sd.type) {
+        case "PowerUp-SpeedUp" -> powerups.add(new SpeedUp(sd.x, sd.y));
+        case "PowerUp-MultiShot" -> powerups.add(new MultiShot(sd.x, sd.y));
+        case "PowerUp-WeaponUpgrade" -> powerups.add(new WeaponUpgrade(sd.x, sd.y));
+        // ❌ ไม่ต้อง spawn Alien1/Alien2 ที่นี่แล้ว เพราะใช้ loadAlienGroups()
+    }
+}
+
+
+
+
+
+    // ───── Player move ─────
     player.act();
 
-    // ┌───────────────┐
-    // │ PowerUp Logic │
-    // └───────────────┘
+    // ───── PowerUps ─────
     for (PowerUp powerup : powerups) {
         if (powerup.isVisible()) {
             powerup.act();
@@ -494,9 +595,7 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
         }
     }
 
-    // ┌──────────────┐
-    // │ Enemy Update │
-    // └──────────────┘
+    // ───── Enemy update ─────
     for (Enemy enemy : enemies) {
         if (enemy.isVisible()) {
             enemy.act();
@@ -508,8 +607,7 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
                 int scaledWidth = explosionImage.getWidth(null) * 2;
                 int scaledHeight = explosionImage.getHeight(null) * 2;
                 Image scaledExplosion = explosionImage.getScaledInstance(
-                        scaledWidth, scaledHeight, Image.SCALE_SMOOTH
-                );
+                        scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
 
                 explosions.add(new Explosion(
                         centerX - scaledWidth / 2,
@@ -522,43 +620,51 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
             }
         }
 
-        // ┌────────────────────────────────────────┐
-        // │ Alien1 ยิงกระสุนแนวตรง (ไม่เล็งผู้เล่น) │
-        // └────────────────────────────────────────┘
-     if (enemy instanceof Alien1 alien1) {
-    if (alien1.isVisible() && frame % 60 == 0) {
-        alien1.fire(); // ✅ ยิงเฉพาะถ้ายังไม่ตาย
-    }
+        // ───── กระสุนของศัตรู ─────
+        if (enemy instanceof Alien1 alien1) {
+            for (EnemyBullet bullet : alien1.getBullets()) {
+                if (bullet.isVisible()) {
+                    bullet.act();
 
-    for (EnemyBullet bullet : alien1.getBullets()) {
-        if (bullet.isVisible()) {
-            bullet.act();
-
-            if (bullet.collidesWith(player)) {
-                bullet.die();
-                player.setDying(true);
-                explosions.add(new Explosion(
-                        player.getX(), player.getY(),
-                        new ImageIcon(IMG_EXPLOSION).getImage()
-                ));
-                gameOverCountdown = 60;
+                    if (bullet.collidesWith(player)) {
+                        bullet.die();
+                        player.setDying(true);
+                        explosions.add(new Explosion(
+                                player.getX(), player.getY(),
+                                new ImageIcon(IMG_EXPLOSION).getImage()
+                        ));
+                        gameOverCountdown = 60;
+                    }
+                }
             }
         }
     }
-}
 
+    // ───── ยิงทีละลำตามลำดับ ─────
+    if (alienShootCooldown > 0) {
+        alienShootCooldown--;
+    } else {
+        List<Alien1> aliveAliens = new ArrayList<>();
+        for (Enemy e : enemies) {
+            if (e instanceof Alien1 a && a.isVisible()) {
+                aliveAliens.add(a);
+            }
+        }
+
+        if (!aliveAliens.isEmpty()) {
+            Alien1 shooter = aliveAliens.get(shooterIndex % aliveAliens.size());
+            //shooter.fire(); 
+            shooterIndex++;
+            alienShootCooldown = SHOOT_DELAY; // เว้นจังหวะยิง
+        }
     }
 
-    // ┌────────────────┐
-    // │ Explosion Timer │
-    // └────────────────┘
+    // ───── Explosion update ─────
     for (Explosion explosion : explosions) {
         explosion.act();
     }
 
-    // ┌────────────────────┐
-    // │ Game Over Countdown │
-    // └────────────────────┘
+    // ───── Game Over countdown ─────
     if (gameOverCountdown > 0) {
         gameOverCountdown--;
         if (gameOverCountdown == 0) {
@@ -566,9 +672,7 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
         }
     }
 
-    // ┌────────────────────────┐
-    // │ Player Shots vs Enemies │
-    // └────────────────────────┘
+    // ───── Player Shot vs Enemy ─────
     List<Shot> shotsToRemove = new ArrayList<>();
     for (Shot shot : shots) {
         shot.act();
@@ -582,19 +686,19 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
         int shotY = shot.getY();
 
         for (Enemy enemy : enemies) {
+            if (!enemy.isVisible()) continue;
+
             int enemyX = enemy.getX();
             int enemyY = enemy.getY();
 
-            if (enemy.isVisible()
-                    && shotX >= enemyX && shotX <= enemyX + ALIEN_WIDTH
+            if (shotX >= enemyX && shotX <= enemyX + ALIEN_WIDTH
                     && shotY >= enemyY && shotY <= enemyY + ALIEN_HEIGHT) {
 
                 Image explosionImage = new ImageIcon(IMG_EXPLOSION).getImage();
                 Image scaledExplosion = explosionImage.getScaledInstance(
                         explosionImage.getWidth(null) * 2,
                         explosionImage.getHeight(null) * 2,
-                        Image.SCALE_SMOOTH
-                );
+                        Image.SCALE_SMOOTH);
 
                 int centerX = enemyX + ALIEN_WIDTH / 2;
                 int centerY = enemyY + ALIEN_HEIGHT / 2;
@@ -615,7 +719,31 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
     }
 
     shots.removeAll(shotsToRemove);
+
+
+// ───── Stage Transition เมื่อ wave สุดท้ายผ่านไป ─────
+if (!inTransition && currentGroupIndex >= alienGroups.size()) {
+    inTransition = true;
+    transitionTimer = TRANSITION_DURATION;
 }
+
+if (inTransition) {
+    transitionTimer--;
+    if (transitionTimer <= 0) {
+        inTransition = false;
+        currentStage++;                // ⬆️ Stage +1
+        currentGroupIndex = 0;
+        shooterIndex = 0;
+        alienGroups.clear();          // ล้าง wave เดิม
+        loadAlienGroups();            // โหลด wave ใหม่
+    }
+}
+
+
+
+}
+
+
 
 
 
