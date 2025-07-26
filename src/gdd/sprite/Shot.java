@@ -3,6 +3,8 @@ package gdd.sprite;
 import static gdd.Global.*;
 import javax.swing.ImageIcon;
 
+import gdd.SoundEffect;
+
 public class Shot extends Sprite {
 
     private static final int H_SPACE = 20;
@@ -13,6 +15,7 @@ public class Shot extends Sprite {
 
     public Shot(int x, int y) {
         initShot(x, y);
+        SoundEffect.play("GDD1-25\\src\\audio\\shoot.wav"); // 🔊 เล่นเสียงยิงทันที
     }
 
     private void initShot(int x, int y) {

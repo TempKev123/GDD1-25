@@ -3,12 +3,13 @@ package gdd.scene;
 import gdd.AudioPlayer;
 import gdd.Game;
 import static gdd.Global.*;
+import gdd.SoundEffect; // โฌ…๏ธ� เน€เธ�เธดเน�เธกเน�เธซเน�เน�เธ�เน�เน�เธ�
 import gdd.SpawnDetails;
 import gdd.powerup.MultiShot;
 import gdd.powerup.PowerUp;
 import gdd.powerup.SpeedUp;
 import gdd.powerup.WeaponUpgrade;
-
+import gdd.sprite.*;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -26,7 +27,6 @@ import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import gdd.sprite.*;
 
 public class Scene1 extends JPanel {
     private int frame = 0;
@@ -611,7 +611,7 @@ if (sd != null) {
                         centerY - scaledHeight / 2,
                         scaledExplosion
                 ));
-
+                SoundEffect.play("GDD1-25\\src\\audio\\explosion.wav", 0f); // 🔊 เล่นเสียงผู้เล่นตาย
                 player.setDying(true);
                 gameOverCountdown = 60;
             }
@@ -625,6 +625,7 @@ if (sd != null) {
 
                     if (bullet.collidesWith(player)) {
                         bullet.die();
+                        SoundEffect.play("GDD1-25\\src\\audio\\explosion.wav", 0f); // 🔊 เล่นเสียงผู้เล่นตาย
                         player.setDying(true);
                         explosions.add(new Explosion(
                                 player.getX(), player.getY(),
@@ -643,6 +644,7 @@ if (sd != null) {
 
                     if (bullet.collidesWith(player)) {
                         bullet.die();
+                        SoundEffect.play("GDD1-25\\src\\audio\\explosion.wav", 0f); // 🔊 เล่นเสียงผู้เล่นตาย
                         player.setDying(true);
                         
                         // Create explosion at player position
@@ -737,6 +739,7 @@ if (sd != null) {
 
                 enemy.setImage(explosionImage);
                 enemy.setDying(true);
+                SoundEffect.play("GDD1-25\\src\\audio\\invaderkilled.wav", -5f); // 💥 เสียงระเบิดแบบไม่ดังแสบหู
                 deaths++;
                 shot.die();
                 shotsToRemove.add(shot);
