@@ -8,13 +8,7 @@ import gdd.powerup.MultiShot;
 import gdd.powerup.PowerUp;
 import gdd.powerup.SpeedUp;
 import gdd.powerup.WeaponUpgrade;
-import gdd.sprite.Alien1;
-import gdd.sprite.Alien2;
-import gdd.sprite.Enemy;
-import gdd.sprite.EnemyBullet;
-import gdd.sprite.Explosion;
-import gdd.sprite.Player;
-import gdd.sprite.Shot;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -32,9 +26,9 @@ import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import gdd.sprite.*;
 
 public class Scene1 extends JPanel {
-
     private int frame = 0;
     private List<PowerUp> powerups;
     private List<Enemy> enemies;
@@ -157,15 +151,8 @@ private void loadAlienGroups() {
     }
 }
 
-
-
-
-
-
-
-
-
 private void loadSpawnDetails() {
+    spawnMap.put(1000, new SpawnDetails("Jeff", BOARD_WIDTH, 200)); // spawn at frame 1000
     //there are 18600 frames in 5 minuites
         // TODO load this from a file
         /*spawnMap.put(51, new SpawnDetails("Jeff", 500, 1)); // spawn jeff1
@@ -440,10 +427,19 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
     }
 
    private void drawEnemyBullets(Graphics g) {
+    // Draw Alien1 bullets
     for (Enemy e : enemies) {
         if (e instanceof Alien1 alien1) {
             for (EnemyBullet b : alien1.getBullets()) {
-                if (b.isVisible()) { // ใช้ตามระบบ Sprite
+                if (b.isVisible()) {
+                    g.drawImage(b.getImage(), b.getX(), b.getY(), this);
+                }
+            }
+        }
+        // Draw Jeff bullets
+        else if (e instanceof Jeff jeff) {
+            for (EnemyBullet b : jeff.getBullets()) {
+                if (b.isVisible()) {
                     g.drawImage(b.getImage(), b.getX(), b.getY(), this);
                 }
             }
@@ -574,6 +570,7 @@ if (sd != null) {
         case "PowerUp-SpeedUp" -> powerups.add(new SpeedUp(sd.x, sd.y));
         case "PowerUp-MultiShot" -> powerups.add(new MultiShot(sd.x, sd.y));
         case "PowerUp-WeaponUpgrade" -> powerups.add(new WeaponUpgrade(sd.x, sd.y));
+        case "Jeff" -> enemies.add(new Jeff(sd.x, sd.y));
         // ❌ ไม่ต้อง spawn Alien1/Alien2 ที่นี่แล้ว เพราะใช้ loadAlienGroups()
     }
 }
@@ -620,7 +617,7 @@ if (sd != null) {
             }
         }
 
-        // ───── กระสุนของศัตรู ─────
+        // ───── กระสุนของศัตรู (Alien1 และ Jeff) ─────
         if (enemy instanceof Alien1 alien1) {
             for (EnemyBullet bullet : alien1.getBullets()) {
                 if (bullet.isVisible()) {
@@ -632,6 +629,35 @@ if (sd != null) {
                         explosions.add(new Explosion(
                                 player.getX(), player.getY(),
                                 new ImageIcon(IMG_EXPLOSION).getImage()
+                        ));
+                        gameOverCountdown = 60;
+                    }
+                }
+            }
+        }
+        // ───── Jeff bullet collision ─────
+        else if (enemy instanceof Jeff jeff) {
+            for (EnemyBullet bullet : jeff.getBullets()) {
+                if (bullet.isVisible()) {
+                    bullet.act();
+
+                    if (bullet.collidesWith(player)) {
+                        bullet.die();
+                        player.setDying(true);
+                        
+                        // Create explosion at player position
+                        Image explosionImage = new ImageIcon(IMG_EXPLOSION).getImage();
+                        int centerX = player.getX() + player.getImage().getWidth(null) / 2;
+                        int centerY = player.getY() + player.getImage().getHeight(null) / 2;
+                        int scaledWidth = explosionImage.getWidth(null) * 2;
+                        int scaledHeight = explosionImage.getHeight(null) * 2;
+                        Image scaledExplosion = explosionImage.getScaledInstance(
+                                scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
+
+                        explosions.add(new Explosion(
+                                centerX - scaledWidth / 2,
+                                centerY - scaledHeight / 2,
+                                scaledExplosion
                         ));
                         gameOverCountdown = 60;
                     }
@@ -816,4 +842,4 @@ if (inTransition) {
         }
     } 
 
-} 
+}
