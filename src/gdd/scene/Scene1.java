@@ -13,7 +13,9 @@ import gdd.sprite.*;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -28,6 +30,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+
 public class Scene1 extends JPanel {
     private int frame = 0;
     private List<PowerUp> powerups;
@@ -36,6 +39,8 @@ public class Scene1 extends JPanel {
     private List<Shot> shots;
     private Player player;
     private int gameOverCountdown = -1;
+    private int elapsedFrames = 0;
+
     // private Shot shot;
 
     final int BLOCKHEIGHT = 50;
@@ -278,6 +283,8 @@ private void loadSpawnDetails() {
     }
 
 private void drawMap(Graphics g) {
+
+
      // stars background
     int scrollOffset = (frame) % BLOCKWIDTH;
     //int scrollOffset = BLOCKWIDTH - (frame % BLOCKWIDTH);
@@ -312,11 +319,34 @@ private void drawMap(Graphics g) {
         }
     }
     // HUD: Display power-up levels
-g.setColor(Color.CYAN);
-g.setFont(new Font("Arial", Font.BOLD, 14));
+         Graphics2D g2d = (Graphics2D) g;
+    Font font = new Font("Consolas", Font.BOLD, 16);
+    g2d.setFont(font);
 
-g.drawString("Multishot Lv: " + player.getMultishotLevel(), 20, 40);
-g.drawString("Speed Lv: " + player.getSpeedLevel(), 20, 60);
+    // 🎯 Stage
+    g2d.setColor(Color.GREEN);
+    g2d.drawString("STAGE " + currentStage, 20, 30);
+
+    // ⏱ Time (กลางบน)
+    int seconds = elapsedFrames / 60;
+    int minutes = seconds / 60;
+    seconds %= 60;
+    String timeStr = String.format("TIME: %02d:%02d", minutes, seconds);
+    g2d.setColor(Color.WHITE);
+    FontMetrics fm = g2d.getFontMetrics();
+    int timeX = (BOARD_WIDTH - fm.stringWidth(timeStr)) / 2;
+    g2d.drawString(timeStr, timeX, 30);
+
+    // 🌀 Multishot Icon
+    ImageIcon multiIcon = new ImageIcon("GDD1-25\\src\\images\\multishot.png");
+    g2d.drawImage(multiIcon.getImage(), 20, 60, null);           // Y = 60
+    g2d.setColor(Color.CYAN);
+    g2d.drawString("× " + player.getMultishotLevel(), 50, 78);  // Y = 78 (ไอคอน + ช่องว่าง)
+
+    // ⚡ Speed Icon
+    ImageIcon speedIcon = new ImageIcon("GDD1-25\\src\\images\\speedup.png");
+    g2d.drawImage(speedIcon.getImage(), 20, 100, null);          // Y = 100 → ห่างจาก Multishot 40px
+    g2d.drawString("× " + player.getSpeedLevel(), 50, 118);     // Y = 118
 }
 
    private void drawStarCluster(Graphics g, int x, int y, int width, int height) {
@@ -499,6 +529,11 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
             drawPlayer(g);
             drawShot(g);
             drawEnemyBullets(g);
+            // ✅ Draw Timer HUD
+            int seconds = elapsedFrames / 60;
+            int minutes = seconds / 60;
+              seconds = seconds % 60;
+              elapsedFrames++;
 
         } else {
 
