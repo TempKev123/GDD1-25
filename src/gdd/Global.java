@@ -15,8 +15,10 @@ public class Global {
     public static final int GROUND = 580; // Doubled from 290
     public static final int BOMB_HEIGHT = 10; // Doubled from 5
 
-    public static final int ALIEN_HEIGHT = 24; // Doubled from 12
-    public static final int ALIEN_WIDTH = 24; // Doubled from 12
+    public static final int ALIEN_HEIGHT = 30; // Doubled from 12
+    public static final int ALIEN_WIDTH = 30; // Doubled from 12
+    public static final int JEFF_HEIGHT = 69; // Doubled from 75
+    public static final int JEFF_WIDTH = 98; // Doubled from 100
     public static final int ALIEN_INIT_X = 300; // Doubled from 150
     public static final int ALIEN_INIT_Y = 10; // Doubled from 5
     public static final int ALIEN_GAP = 30; // Gap between aliens
@@ -29,20 +31,21 @@ public class Global {
     public static final int PLAYER_HEIGHT = 20; // Doubled from 10
 
     // Images
-    public static final String IMG_ENEMY = "GDD1-25\\src\\images\\alien.png";
-    public static final String IMG_PLAYER = "GDD1-25\\src\\images\\ship.png";
-    public static final String IMG_SHOT = "GDD1-25\\src\\images\\fire1.png";
-    public static final String IMG_EXPLOSION = "GDD1-25\\src\\images\\explosion.png";
-    public static final String IMG_TITLE = "GDD1-25\\src\\images\\title.png";
-    public static final String IMG_POWERUP_SPEEDUP = "GDD1-25\\src\\images\\speedup.png";
-    public static final String IMG_ALIEN2 = "GDD1-25\\src\\images\\alien2.png";
-    public static final String IMG_POWERUP_MULTISHOT = "GDD1-25\\src\\images\\multishot.png";
-    public static final String IMG_POWERUP_WEAPON = "GDD1-25\\src\\images\\upgrade.png";
-    public static final String IMG_POWERUP_LAZER = "GDD1-25\\src\\images\\upgrade.png";
-    public static final String IMG_BOSS1 = "GDD1-25\\src\\images\\jeff.png";
-    public static final String IMG_BOSS2 = "GDD1-25\\src\\images\\jeff_mech_head.png";
-    public static final String IMG_BOSS3 = "GDD1-25\\src\\images\\jeff_bone_head.png";
-    public static final String IMG_BOSS_NECK = "GDD1-25\\src\\images\\jeff_neck.png";
-    public static final String IMG_ENEMY_BULLET = "GDD1-25\\src\\images\\bomb.png";
+    public static final String IMG_ENEMY = "src/images/alien.png";
+    public static final String IMG_PLAYER = "src/images/ship.png";
+    public static final String IMG_SHOT = "src/images/fire1.png";
+    public static final String IMG_SUPERSHOT = "src/images/fire_poweerup.png";
+    public static final String IMG_EXPLOSION = "src/images/explosion.png";
+    public static final String IMG_TITLE = "src/images/title.png";
+    public static final String IMG_POWERUP_SPEEDUP = "src/images/speedup.png";
+    public static final String IMG_ALIEN2 = "src/images/alien2.png";
+    public static final String IMG_POWERUP_MULTISHOT = "src/images/multishot.png";
+    public static final String IMG_POWERUP_WEAPON = "src/images/upgrade.png";
+    public static final String IMG_POWERUP_LAZER = "src/images/upgrade.png";
+    public static final String IMG_BOSS1 = "src/images/jeff.png";
+    public static final String IMG_BOSS2 = "src/images/jeff_mech_head.png";
+    public static final String IMG_BOSS3 = "src/images/jeff_bone_head.png";
+    public static final String IMG_BOSS_NECK = "src/images/jeff_neck.png";
+    public static final String IMG_ENEMY_BULLET = "src/images/fire2.png";
 
 }

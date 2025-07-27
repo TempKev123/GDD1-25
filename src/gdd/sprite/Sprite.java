@@ -80,4 +80,5 @@ abstract public class Sprite {
     public boolean isDying() {
         return this.dying;
     }
+    
 }

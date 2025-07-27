@@ -80,7 +80,7 @@ private List<Enemy> currentGroup = new ArrayList<>();
   private final int WAIT_DURATION = 120; // 2 วินาที
 
   private int alienShootCooldown = 0;
-  private final int SHOOT_DELAY = 30; // ยิงทีละลำทุก 0.5 วิ
+  private final int SHOOT_DELAY = 120; // ยิงทีละลำทุก 0.5 วิ
   private int shooterIndex = 0;
 
 
@@ -129,7 +129,7 @@ private void loadAlienGroups() {
 
         if (g == 4) {
             // 👑 กลุ่มสุดท้าย → Boss (เปลี่ยนตาม stage ได้)
-            Alien2 boss = new Alien2(BOARD_WIDTH, 180);
+            Jeff boss = new Jeff(BOARD_WIDTH, 200);
             group.add(boss);
         } else {
             int x = BOARD_WIDTH;
@@ -157,21 +157,21 @@ private void loadAlienGroups() {
 }
 
 private void loadSpawnDetails() {
-    spawnMap.put(1000, new SpawnDetails("Jeff", BOARD_WIDTH, 200)); // spawn at frame 1000
+    spawnMap.put(50, new SpawnDetails("Jeff", BOARD_WIDTH, 200)); // spawn at frame 1000
     //there are 18600 frames in 5 minuites
-        // TODO load this from a file
-        /*spawnMap.put(51, new SpawnDetails("Jeff", 500, 1)); // spawn jeff1
-        spawnMap.put(52, new SpawnDetails("Jeff", 500, 200)); // spawn jeff2
-        spawnMap.put(53, new SpawnDetails("Jeff", 500, 450)); // spawn jeff3*/
     Random rand = new Random();
 
     // ───── PowerUps ─────
-    spawnMap.put(50, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, 100));
-    spawnMap.put(350, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
-    spawnMap.put(450, new SpawnDetails("PowerUp-WeaponUpgrade", BOARD_WIDTH, 150));
+    spawnMap.put(100, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, 100));
     spawnMap.put(805, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, 300));
+    spawnMap.put(501, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
+    spawnMap.put(1500, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
+    spawnMap.put(2100, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
+    spawnMap.put(6000, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
+    spawnMap.put(16500, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
+    spawnMap.put(10000, new SpawnDetails("PowerUp-WeaponUpgrade", BOARD_WIDTH, 150));
 
-    // ───── Alien2 ─────
+    /*/ ───── Alien2 ─────
     int[] alien2Frames = {401, 402, 441, 442, 443, 444, 447, 448, 451, 452, 453, 600, 700, 730, 750};
     int[] alien2Y =      {100, 200, 390, 100, 400,  20, 500, 200, 300, 400,  30, 100, 200, 200, 200};
 
@@ -228,7 +228,7 @@ private void loadSpawnDetails() {
     for (int i = 0; i < 5; i++) {
         int frame = 700 + (i * 20); // 700, 720, 740...
         spawnMap.put(frame, new SpawnDetails("Alien1", BOARD_WIDTH, delayY + i * 10));
-    }
+    }*/
 }
 
 
@@ -338,13 +338,13 @@ private void drawMap(Graphics g) {
     g2d.drawString(timeStr, timeX, 30);
 
     // 🌀 Multishot Icon
-    ImageIcon multiIcon = new ImageIcon("GDD1-25\\src\\images\\multishot.png");
+    ImageIcon multiIcon = new ImageIcon(IMG_POWERUP_MULTISHOT);
     g2d.drawImage(multiIcon.getImage(), 20, 60, null);           // Y = 60
     g2d.setColor(Color.CYAN);
     g2d.drawString("× " + player.getMultishotLevel(), 50, 78);  // Y = 78 (ไอคอน + ช่องว่าง)
 
     // ⚡ Speed Icon
-    ImageIcon speedIcon = new ImageIcon("GDD1-25\\src\\images\\speedup.png");
+    ImageIcon speedIcon = new ImageIcon(IMG_POWERUP_SPEEDUP);
     g2d.drawImage(speedIcon.getImage(), 20, 100, null);          // Y = 100 → ห่างจาก Multishot 40px
     g2d.drawString("× " + player.getSpeedLevel(), 50, 118);     // Y = 118
 }
@@ -753,9 +753,21 @@ if (sd != null) {
 
             int enemyX = enemy.getX();
             int enemyY = enemy.getY();
+            // Set default hitbox
+            int hitboxOffsetX = 0;
+            int hitboxOffsetY = 0;
+            int hitboxWidth = ALIEN_WIDTH;
+            int hitboxHeight = ALIEN_HEIGHT;
 
-            if (shotX >= enemyX && shotX <= enemyX + ALIEN_WIDTH
-                    && shotY >= enemyY && shotY <= enemyY + ALIEN_HEIGHT) {
+            // Per-enemy hitbox override
+            if (enemy instanceof Jeff) {
+                hitboxWidth = 200;
+                hitboxHeight = 220;}
+
+
+            if (shotX >= enemyX + hitboxOffsetX && shotX <= enemyX + hitboxOffsetX + hitboxWidth
+        && shotY >= enemyY + hitboxOffsetY && shotY <= enemyY + hitboxOffsetY + hitboxHeight)
+            {
 
                 Image explosionImage = new ImageIcon(IMG_EXPLOSION).getImage();
                 Image scaledExplosion = explosionImage.getScaledInstance(
@@ -838,40 +850,95 @@ if (inTransition) {
             int key = e.getKeyCode();
 
             if (key == KeyEvent.VK_SPACE && inGame) {
-                if (shots.size() < 4) {
+                if (shots.size() < 18) {
                     int baseX = player.getX() + PLAYER_WIDTH;
                     int baseY = player.getY() + PLAYER_HEIGHT / 2;
 
                     int weapon = player.getWeaponType();
                     int level = player.getMultishotLevel();
 
-                    if (weapon == 1) {
-                        shots.add(new Shot(baseX, baseY - 10));
-                        shots.add(new Shot(baseX, baseY));
-                        shots.add(new Shot(baseX, baseY + 10));
-                    } else {
+                    if (weapon == 0) {
                         switch (level) {
-                            case 0 -> shots.add(new Shot(baseX, baseY));
+                        case 0-> shots.add(new Shot(baseX, baseY ));
+                        case 1 -> {
+                            shots.add(new Shot(baseX, baseY ));
+                            shots.add(new Shot(baseX-15, baseY-10));
+                            shots.add(new Shot(baseX-15, baseY +10));
+                            }
+                        case 2 -> {
+                            shots.add(new Shot(baseX, baseY ));
+                            shots.add(new Shot(baseX-15, baseY-10));
+                            shots.add(new Shot(baseX-15, baseY +10));
+                            shots.add(new Shot(baseX-20, baseY-20));
+                            shots.add(new Shot(baseX-20, baseY +20));
+                        }
+                        case 3 -> {
+                            shots.add(new Shot(baseX, baseY ));
+                            shots.add(new Shot(baseX-15, baseY-10));
+                            shots.add(new Shot(baseX-15, baseY +10));
+                            shots.add(new Shot(baseX-20, baseY-20));
+                            shots.add(new Shot(baseX-20, baseY +20));
+                            shots.add(new Shot(baseX-25, baseY-30));
+                            shots.add(new Shot(baseX-25, baseY +30));
+                            }
+                        case 4 -> {
+                            shots.add(new Shot(baseX, baseY ));
+                            shots.add(new Shot(baseX-15, baseY-10));
+                            shots.add(new Shot(baseX-15, baseY +10));
+                            shots.add(new Shot(baseX-20, baseY-20));
+                            shots.add(new Shot(baseX-20, baseY +20));
+                            shots.add(new Shot(baseX-25, baseY-30));
+                            shots.add(new Shot(baseX-25, baseY +30));
+                            shots.add(new Shot(baseX-30, baseY-35));
+                            shots.add(new Shot(baseX-30, baseY +35));
+                            }
+                        }} else {
+                        switch (level) {
+                            
+                            case 0 -> {
+                                shots.add(new Shot(baseX, baseY-25));
+                                shots.add(new Shot(baseX, baseY));
+                                shots.add(new Shot(baseX, baseY+25));
+                            }
                             case 1 -> {
-                                shots.add(new Shot(baseX, baseY - 10));
-                                shots.add(new Shot(baseX, baseY + 10));
+                                shots.add(new Shot(baseX, baseY+50));
+                                shots.add(new Shot(baseX, baseY+25));
+                                shots.add(new Shot(baseX, baseY));
+                                shots.add(new Shot(baseX, baseY-25));
+                                shots.add(new Shot(baseX, baseY-50));
                             }
                             case 2 -> {
-                                shots.add(new Shot(baseX, baseY - 15));
+                                shots.add(new Shot(baseX, baseY+75));
+                                shots.add(new Shot(baseX, baseY+50));
+                                shots.add(new Shot(baseX, baseY+25));
                                 shots.add(new Shot(baseX, baseY));
-                                shots.add(new Shot(baseX, baseY + 15));
+                                shots.add(new Shot(baseX, baseY-25));
+                                shots.add(new Shot(baseX, baseY-50));
+                                shots.add(new Shot(baseX, baseY+75));
                             }
                             case 3 -> {
-                                shots.add(new Shot(baseX, baseY - 20));
-                                shots.add(new Shot(baseX, baseY - 10));
+                                shots.add(new Shot(baseX, baseY+100));
+                                shots.add(new Shot(baseX, baseY+75));
+                                shots.add(new Shot(baseX, baseY+50));
+                                shots.add(new Shot(baseX, baseY+25));
                                 shots.add(new Shot(baseX, baseY));
-                                shots.add(new Shot(baseX, baseY + 10));
-                                shots.add(new Shot(baseX, baseY + 20));
+                                shots.add(new Shot(baseX, baseY-25));
+                                shots.add(new Shot(baseX, baseY-50));
+                                shots.add(new Shot(baseX, baseY-75));
+                                shots.add(new Shot(baseX, baseY-100));
                             }
                             case 4 -> {
-                                for (int i = -30; i <= 30; i += 10) {
-                                    shots.add(new Shot(baseX, baseY + i));
-                                }
+                                shots.add(new Shot(baseX, baseY+125));
+                                shots.add(new Shot(baseX, baseY+100));
+                                shots.add(new Shot(baseX, baseY+75));
+                                shots.add(new Shot(baseX, baseY+50));
+                                shots.add(new Shot(baseX, baseY+25));
+                                shots.add(new Shot(baseX, baseY));
+                                shots.add(new Shot(baseX, baseY-25));
+                                shots.add(new Shot(baseX, baseY-50));
+                                shots.add(new Shot(baseX, baseY-75));
+                                shots.add(new Shot(baseX, baseY-100));
+                                shots.add(new Shot(baseX, baseY-125));
                             }
                         }
                     }

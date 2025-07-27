@@ -10,8 +10,6 @@ public class Jeff extends Enemy{
     private int shootCooldown = 0;
     private int patternStep = 0;
     private String head;
-    private int hitboxOffsetX = 20; // adjust as needed
-    private int hitboxOffsetY = 40; // adjust as needed
     private int hitboxWidth = 200;  // Made bigger
     private int hitboxHeight = 250; // Made bigger
     private int dy = 1;
@@ -106,7 +104,7 @@ public class Jeff extends Enemy{
             shootCooldown--;
         } else {
             shootPattern();
-            shootCooldown = 60; // adjust cooldown (frames) as needed
+            shootCooldown = 90; // adjust cooldown (frames) as needed
         }
 
         // Update bullets
@@ -143,7 +141,8 @@ public class Jeff extends Enemy{
         
         // Position hitbox at middle-left of sprite
         int hitboxX = this.x; // Left edge of sprite
-        int hitboxY = this.y + (spriteHeight / 2) - (hitboxHeight / 2); // Centered vertically
+        int hitboxY = this.y + (spriteHeight / 2) - (hitboxHeight / 2);
+
 
         // Define other sprite's bounding box
         int otherX = other.getX();
@@ -157,4 +156,5 @@ public class Jeff extends Enemy{
                 && hitboxY < otherY + otherHeight
                 && hitboxY + hitboxHeight > otherY;
     }   
+    
 }

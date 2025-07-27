@@ -5,14 +5,14 @@ import javax.swing.ImageIcon;
 
 public class EnemyBullet extends Sprite {
 
-    private final double dx = -4;
+    private final double dx = -2;
     private final double dy = 0;
 
     public EnemyBullet(int x, int y) {
         this.x = x;
         this.y = y;
 
-        var ii = new ImageIcon("GDD1-25\\src\\images\\fire2.png"); // หรือ IMG_BOMB
+        var ii = new ImageIcon(IMG_ENEMY_BULLET); // หรือ IMG_BOMB
         setImage(ii.getImage());
     }
 
