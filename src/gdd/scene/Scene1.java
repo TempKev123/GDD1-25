@@ -62,7 +62,6 @@ public class Scene1 extends JPanel {
 
     private Timer timer;
     private final Game game;
-    
 
     private int currentRow = -1;
     // TODO load this map from a file
@@ -297,6 +296,7 @@ private void drawMap(Graphics g) {
     ImageIcon speedIcon = new ImageIcon(IMG_POWERUP_SPEEDUP);
     g2d.drawImage(speedIcon.getImage(), 20, 100, null);          // Y = 100 → ห่างจาก Multishot 40px
     g2d.drawString("× " + player.getSpeedLevel(), 50, 118);     // Y = 118
+
     // 🎯 Arcade Score HUD - ขวาบน
 g2d.setColor(Color.YELLOW);
 g2d.setFont(new Font("Consolas", Font.BOLD, 16));

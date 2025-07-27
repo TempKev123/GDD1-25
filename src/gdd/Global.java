@@ -56,6 +56,7 @@ public class Global {
     public static final String SFX_INVKILLED = Paths.get("src", "audio", "invaderkilled.wav").toString();  
     public static final String SFX_TITLE = Paths.get("src", "audio", "title.wav").toString();
     public static final String SFX_BGM = Paths.get("src", "audio", "scene1.wav").toString();
+
 }
 
 
