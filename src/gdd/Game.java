@@ -60,7 +60,7 @@ public class Game extends JFrame  {
     }
 
     public void loadScene3() {
-        System.out.println("Loading Scene 3333...");
+        System.out.println("Loading Scene 3...");
         getContentPane().removeAll();
         add(scene2);
         scene1.stop();

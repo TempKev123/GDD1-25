@@ -41,7 +41,8 @@ public class Scene1 extends JPanel {
 
     private int gameOverCountdown = -1;
     private int elapsedFrames = 0;
-    private int jefflife=10; //make 30 in level 2
+    private int jefflife=15; //make 30 in level 2
+    private int maxstage = 2; //max stage
 
     // private Shot shot;
 
@@ -112,7 +113,7 @@ private List<Enemy> currentGroup = new ArrayList<>();
         // gameInit();
         loadSpawnDetails();
         loadAlienGroups();
-        // game.loadScene3();
+        //game.loadScene3();
     }
 
     private void initAudio() {
@@ -126,20 +127,20 @@ private List<Enemy> currentGroup = new ArrayList<>();
     }
 
 private void loadAlienGroups() {
-    int groupCount = 5;
+    System.out.print("loading alien groups");
+    alienGroups.clear();
+    int groupCount = 2;
 
-    for (int g = 0; g < groupCount; g++) {
+    for (int g = 1; g <= groupCount; g++) {
         List<Enemy> group = new ArrayList<>();
-
-        if (g == 4) {//change later to 5 min per stage
-            // 👑 กลุ่มสุดท้าย → Boss (เปลี่ยนตาม stage ได้)
-            System.out.println("change_scenes " );
-            Jeff boss = new Jeff(BOARD_WIDTH, 200);
-            group.add(boss);
-        } else {
+        
             int x = BOARD_WIDTH;
             int startY = randomizer.nextInt(400- 50) + 50; // Random start Y position
             int gapY = 40;
+            if (currentStage > 1 && g==groupCount) {//Stage 2
+                Jeff boss = new Jeff(BOARD_WIDTH, 200);
+                group.add(boss);
+            }
 
             for (int i = 0; i < 5; i++) {
                 int y = startY + (i * gapY);
@@ -147,14 +148,9 @@ private void loadAlienGroups() {
                 alien.setStopAtCenter(true);
 
                 // ✨ เพิ่มความแตกต่างตาม stage โดยไม่เปลี่ยนรูปแบบ
-                if (currentStage == 10) {//Stage 2
-                    // ตัวอย่าง: เพิ่มความเร็ว หรือเตรียมยิง 2 นัด
-                    // alien.setSpeed(alien.getSpeed() + 1); // ถ้ามี method
-                    // alien.enableDoubleShot(); // ถ้ามีระบบยิงหลายแบบ
-                }
 
                 group.add(alien);
-            }
+            
             }
         
 
@@ -471,7 +467,9 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
         if (inTransition) {
     g.setColor(Color.YELLOW);
     g.setFont(new Font("Arial", Font.BOLD, 28));
-    g.drawString("WAVE " + (currentStage + 1), BOARD_WIDTH / 2 - 70, BOARD_HEIGHT / 2);
+    if(true){
+        g.drawString("The Dragon is escaping! (to level 2)", BOARD_WIDTH , BOARD_HEIGHT / 2);
+    }
 }
 
 
@@ -521,8 +519,8 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
                 BOARD_WIDTH / 2);
 
        
-                System.out.println("you die and load Scene 3 (2) for testing...");
-                game.loadScene3();
+                //System.out.println("you die and load Scene 3 (2) for testing...");
+                //game.loadScene3(); testing ignore this
 
     }
 
@@ -676,7 +674,7 @@ if (sd != null) {
 
         if (!aliveAliens.isEmpty()) {
             Alien1 shooter = aliveAliens.get(shooterIndex % aliveAliens.size());
-            shooter.fire(); 
+            //shooter.fire(); 
             shooterIndex++;
             alienShootCooldown = SHOOT_DELAY; // เว้นจังหวะยิง
         }
@@ -749,7 +747,6 @@ if (sd != null) {
                 ));
                 if(isJeff && jefflife !=0){
                     jefflife--;
-                    SoundEffect.play(SFX_EXPLOSION, -1f);
                     shot.die();
                     shotsToRemove.add(shot);
                 }
@@ -792,19 +789,16 @@ if (inTransition) {
         currentStage++;                // ⬆️ Stage +1
         currentGroupIndex = 0;
         shooterIndex = 0;
-        alienGroups.clear();          // ล้าง wave เดิม
-        loadAlienGroups();            // โหลด wave ใหม่
-    }
+        if (currentStage < maxstage){loadAlienGroups();  }         // โหลด wave ใหม่
+        else{System.out.println("WIN LOAD SCENE 2");
+            game.loadScene3(); // เมื่อถึง stage สุดท้าย ให้โหลด Scene2
+            }
+        }
 }
 
 
 
 }
-
-
-
-
-
 
     private void doGameCycle() {
         frame++;
