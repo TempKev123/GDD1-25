@@ -2,3 +2,4 @@
 0.2.0 changed orientation to a side stroller and added temporary boss object.
 0.2.1 changed direction to move to the right instead.
 0.2.2 kevin broke the background. sorry it's fixxed :P
+0.9.2 Kevin got too lazy to write these
