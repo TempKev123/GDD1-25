@@ -59,6 +59,7 @@ public class Scene1 extends JPanel {
 
     private Timer timer;
     private final Game game;
+    private int score = 0;
 
     private int currentRow = -1;
     // TODO load this map from a file
@@ -347,6 +348,17 @@ private void drawMap(Graphics g) {
     ImageIcon speedIcon = new ImageIcon(IMG_POWERUP_SPEEDUP);
     g2d.drawImage(speedIcon.getImage(), 20, 100, null);          // Y = 100 → ห่างจาก Multishot 40px
     g2d.drawString("× " + player.getSpeedLevel(), 50, 118);     // Y = 118
+
+// 🎯 Arcade Score HUD - ขวาบน
+g2d.setColor(Color.YELLOW);
+g2d.setFont(new Font("Consolas", Font.BOLD, 16));
+
+String scoreStr = String.format("SCORE: %06d", score);
+int scoreX = BOARD_WIDTH - g2d.getFontMetrics().stringWidth(scoreStr) - 20;
+int scoreY = 30;
+g2d.drawString(scoreStr, scoreX, scoreY);
+
+
 }
 
    private void drawStarCluster(Graphics g, int x, int y, int width, int height) {
@@ -788,6 +800,7 @@ if (sd != null) {
                 enemy.setDying(true);
                 SoundEffect.play(SFX_INVKILLED, -5f); // 💥 เสียงระเบิดแบบไม่ดังแสบหู
                 deaths++;
+                score += 100; // ✅ +100 ต่อศัตรู 1 ตัว (จะปรับค่าก็ได้)
                 shot.die();
                 shotsToRemove.add(shot);
             }
