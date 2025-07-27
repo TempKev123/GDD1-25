@@ -107,9 +107,9 @@ public class TitleScene extends JPanel {
         // int y = (d.height + stringHeight) / 2;
         g.drawString(text, x, 600);
 
-        g.setColor(Color.gray);
+        g.setColor(Color.yellow);
         g.setFont(g.getFont().deriveFont(10f));
-        g.drawString("Game by Chayapol", 10, 650);
+        g.drawString("Game by SUJIT DITYAM, PACHARA CHOTIYANONT, & SHANN NEIL ORDONEZ ESTABILLO.", 10, 650);
 
         Toolkit.getDefaultToolkit().sync();
     }
@@ -144,6 +144,7 @@ public class TitleScene extends JPanel {
             int key = e.getKeyCode();
             if (key == KeyEvent.VK_SPACE) {
                 // Load the next scene
+                System.out.println("Loading Scene 1...");
                 game.loadScene2();
             }
 

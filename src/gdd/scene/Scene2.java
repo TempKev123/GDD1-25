@@ -10,6 +10,7 @@ import gdd.powerup.PowerUp;
 import gdd.powerup.SpeedUp;
 import gdd.powerup.WeaponUpgrade;
 import gdd.sprite.*;
+import gdd.scene.ScoreTrack;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -31,17 +32,17 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 
-public class Scene1 extends JPanel {
+public class Scene2 extends JPanel {
     private int frame = 0;
     private List<PowerUp> powerups;
     private List<Enemy> enemies;
     private List<Explosion> explosions;
     private List<Shot> shots;
     private Player player;
-
     private int gameOverCountdown = -1;
     private int elapsedFrames = 0;
-    private int jefflife=10; //make 30 in level 2
+    private int jefflife=30; 
+
 
     // private Shot shot;
 
@@ -106,13 +107,12 @@ private List<Enemy> currentGroup = new ArrayList<>();
     private int lastRowToShow;
     private int firstRowToShow;
 
-    public Scene1(Game game) {
+    public Scene2(Game game) {
         this.game = game;
         // initBoard();
         // gameInit();
         loadSpawnDetails();
         loadAlienGroups();
-        // game.loadScene3();
     }
 
     private void initAudio() {
@@ -131,32 +131,26 @@ private void loadAlienGroups() {
     for (int g = 0; g < groupCount; g++) {
         List<Enemy> group = new ArrayList<>();
 
-        if (g == 4) {//change later to 5 min per stage
+        if (g == 1) {
             // 👑 กลุ่มสุดท้าย → Boss (เปลี่ยนตาม stage ได้)
-            System.out.println("change_scenes " );
+            // game.loadScene3();
             Jeff boss = new Jeff(BOARD_WIDTH, 200);
             group.add(boss);
         } else {
             int x = BOARD_WIDTH;
-            int startY = randomizer.nextInt(400- 50) + 50; // Random start Y position
-            int gapY = 40;
+            int startY = 100;
+            int gapY = 60;
 
             for (int i = 0; i < 5; i++) {
                 int y = startY + (i * gapY);
                 Alien1 alien = new Alien1(x, y);
                 alien.setStopAtCenter(true);
 
-                // ✨ เพิ่มความแตกต่างตาม stage โดยไม่เปลี่ยนรูปแบบ
-                if (currentStage == 10) {//Stage 2
-                    // ตัวอย่าง: เพิ่มความเร็ว หรือเตรียมยิง 2 นัด
-                    // alien.setSpeed(alien.getSpeed() + 1); // ถ้ามี method
-                    // alien.enableDoubleShot(); // ถ้ามีระบบยิงหลายแบบ
-                }
+                
 
                 group.add(alien);
             }
-            }
-        
+        }
 
         alienGroups.add(group);
     }
@@ -166,22 +160,18 @@ private void loadSpawnDetails() {
     //spawnMap.put(50, new SpawnDetails("Jeff", BOARD_WIDTH, 200)); // spawn at frame 1000
     //there are 18600 frames in 5 minuites
     Random rand = new Random();
-     int randomNumber = rand.nextInt(550 - 50 + 1) + 50;
 
     // ───── PowerUps ─────
-    spawnMap.put(10000, new SpawnDetails("PowerUp-WeaponUpgrade", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
-
-    spawnMap.put(10001, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
-    spawnMap.put(18005, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
-    spawnMap.put(100, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
-    spawnMap.put(805, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
-    spawnMap.put(2345, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
-
-    spawnMap.put(3000, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
-    spawnMap.put(1500, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
-    spawnMap.put(5000, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
-    spawnMap.put(8000, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
-    spawnMap.put(16500, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
+    spawnMap.put(100, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, 100));
+    spawnMap.put(805, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, 300));
+    spawnMap.put(501, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
+    spawnMap.put(1500, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
+    spawnMap.put(2100, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
+    spawnMap.put(6000, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
+    spawnMap.put(16500, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
+    spawnMap.put(10000, new SpawnDetails("PowerUp-WeaponUpgrade", BOARD_WIDTH, 150));
+    spawnMap.put(10001, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, 500));
+    spawnMap.put(18005, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, 300));
 
 }
 
@@ -315,12 +305,19 @@ g2d.drawString(scoreStr, scoreX, scoreY);
     int centerX = x + width / 2;
     int centerY = y + height / 2;
 
+    // 🌈 เปลี่ยนสีหลักของดาวตาม currentStage
+    switch (currentStage) {
+        case 1 -> g.setColor(Color.PINK);
+        case 2 -> g.setColor(Color.GREEN);
+        case 3 -> g.setColor(Color.CYAN);
+        default -> g.setColor(Color.YELLOW);
+    }
 
     // Main star (larger)
     g.fillOval(centerX - 2, centerY - 2, 4, 4);
 
     // Smaller surrounding stars
-    g.setColor(Color.cyan);
+    g.setColor(Color.green);
     g.fillOval(centerX - 15, centerY - 10, 2, 2);
     g.fillOval(centerX + 12, centerY - 8, 2, 2);
     g.fillOval(centerX - 8, centerY + 12, 2, 2);
@@ -340,11 +337,11 @@ g2d.drawString(scoreStr, scoreX, scoreY);
     // Draw a single star (small white dot in the center of the given area)
     int centerX = x + width / 2;
     int centerY = y + height / 2;
-    g.setColor(Color.RED);
+    g.setColor(Color.YELLOW);
     g.fillOval(centerX - 12, centerY - 1, 2, 2); // 2x2 pixel star
-    g.setColor(Color.ORANGE);
+    g.setColor(Color.BLUE);
     g.fillOval(centerX + 30, centerY +20, 3, 3); 
-    g.setColor(Color.PINK);
+    g.setColor(Color.WHITE);
     g.fillOval(centerX+10, centerY + 5, 4, 4);     
 }
 private void drawStar(Graphics g, int x, int y, int width, int height) {
@@ -519,11 +516,6 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
         g.setFont(small);
         g.drawString(message, (BOARD_WIDTH - fontMetrics.stringWidth(message)) / 2,
                 BOARD_WIDTH / 2);
-
-       
-                System.out.println("you die and load Scene 3 (2) for testing...");
-                game.loadScene3();
-
     }
 
 private void update() {
@@ -747,7 +739,8 @@ if (sd != null) {
                         centerY - scaledExplosion.getHeight(null) / 2,
                         scaledExplosion
                 ));
-                if(isJeff && jefflife !=0){
+
+                 if(isJeff && jefflife !=0){
                     jefflife--;
                     SoundEffect.play(SFX_EXPLOSION, -1f);
                     shot.die();
@@ -758,7 +751,7 @@ if (sd != null) {
                     enemy.setDying(true);
                     SoundEffect.play(SFX_INVKILLED, -5f); // 💥 เสียงระเบิดแบบไม่ดังแสบหู
                     deaths++;
-                     ScoreTrack.instance.addScore(1000); //+1000 points
+                    ScoreTrack.instance.addScore(1000); //+1000 points
                     shot.die();
                     shotsToRemove.add(shot);
                     jefflife =10;
