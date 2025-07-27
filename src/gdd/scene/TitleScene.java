@@ -69,7 +69,7 @@ public class TitleScene extends JPanel {
 
     private void initAudio() {
         try {
-            String filePath = "GDD1-25\\src\\audio\\title.wav";
+            String filePath = SFX_TITLE;
             audioPlayer = new AudioPlayer(filePath);
 
             audioPlayer.play();

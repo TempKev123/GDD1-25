@@ -113,7 +113,7 @@ private List<Enemy> currentGroup = new ArrayList<>();
 
     private void initAudio() {
         try {
-            String filePath = "GDD1-25\\src\\audio\\scene1.wav";
+            String filePath = SFX_BGM;
             audioPlayer = new AudioPlayer(filePath);
             audioPlayer.play();
         } catch (Exception e) {
@@ -646,7 +646,7 @@ if (sd != null) {
                         centerY - scaledHeight / 2,
                         scaledExplosion
                 ));
-                SoundEffect.play("GDD1-25\\src\\audio\\explosion.wav", 0f); // 🔊 เล่นเสียงผู้เล่นตาย
+                SoundEffect.play(SFX_EXPLOSION, 0f); // 🔊 เล่นเสียงผู้เล่นตาย
                 player.setDying(true);
                 gameOverCountdown = 60;
             }
@@ -660,7 +660,7 @@ if (sd != null) {
 
                     if (bullet.collidesWith(player)) {
                         bullet.die();
-                        SoundEffect.play("GDD1-25\\src\\audio\\explosion.wav", 0f); // 🔊 เล่นเสียงผู้เล่นตาย
+                        SoundEffect.play(SFX_EXPLOSION, 0f); // 🔊 เล่นเสียงผู้เล่นตาย
                         player.setDying(true);
                         explosions.add(new Explosion(
                                 player.getX(), player.getY(),
@@ -679,7 +679,7 @@ if (sd != null) {
 
                     if (bullet.collidesWith(player)) {
                         bullet.die();
-                        SoundEffect.play("GDD1-25\\src\\audio\\explosion.wav", 0f); // 🔊 เล่นเสียงผู้เล่นตาย
+                        SoundEffect.play(SFX_EXPLOSION, 0f); // 🔊 เล่นเสียงผู้เล่นตาย
                         player.setDying(true);
                         
                         // Create explosion at player position
@@ -786,7 +786,7 @@ if (sd != null) {
 
                 enemy.setImage(explosionImage);
                 enemy.setDying(true);
-                SoundEffect.play("GDD1-25\\src\\audio\\invaderkilled.wav", -5f); // 💥 เสียงระเบิดแบบไม่ดังแสบหู
+                SoundEffect.play(SFX_INVKILLED, -5f); // 💥 เสียงระเบิดแบบไม่ดังแสบหู
                 deaths++;
                 shot.die();
                 shotsToRemove.add(shot);
@@ -851,6 +851,7 @@ if (inTransition) {
 
             if (key == KeyEvent.VK_SPACE && inGame) {
                 if (shots.size() < 18) {
+                    SoundEffect.play(SFX_SHOOT);
                     int baseX = player.getX() + PLAYER_WIDTH;
                     int baseY = player.getY() + PLAYER_HEIGHT / 2;
 

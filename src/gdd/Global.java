@@ -48,4 +48,10 @@ public class Global {
     public static final String IMG_BOSS_NECK = "src/images/jeff_neck.png";
     public static final String IMG_ENEMY_BULLET = "src/images/fire2.png";
 
+    //SFX
+    public static final String SFX_SHOOT = "src/audio/shoot.wav";
+    public static final String SFX_EXPLOSION = "src/audio/explosion.wav";
+    public static final String SFX_INVKILLED = "src/audio/invaderkilled.wav";  
+    public static final String SFX_TITLE = "src/audio/title.wav";
+    public static final String SFX_BGM = "src/audio/scene1.wav";  
 }
