@@ -86,7 +86,7 @@ public class Jeff extends Enemy{
 
     @Override
     public void act() {
-        if (x > BOARD_WIDTH - getImage().getWidth(null) - 20) {
+        if (x > BOARD_WIDTH - getImage().getWidth(null) - 10) {
             // Step 1: Move left until just inside the screen
             x -= 2; // Move in smoothly
         } else {
