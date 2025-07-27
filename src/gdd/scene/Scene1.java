@@ -165,8 +165,14 @@ private void loadSpawnDetails() {
 
     // ───── PowerUps ─────
     spawnMap.put(10000, new SpawnDetails("PowerUp-WeaponUpgrade", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
-    spawnMap.put(5000, new SpawnDetails("Alien2", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
+    spawnMap.put(5002, new SpawnDetails("Alien2", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
     spawnMap.put(50, new SpawnDetails("Alien2", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
+    spawnMap.put(1002, new SpawnDetails("Alien2", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
+    spawnMap.put(1010, new SpawnDetails("Alien2", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
+    spawnMap.put(5234, new SpawnDetails("Alien2", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
+    spawnMap.put(18000, new SpawnDetails("Alien2", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
+    spawnMap.put(6789, new SpawnDetails("Alien2", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
+    spawnMap.put(5900, new SpawnDetails("Alien2", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
     spawnMap.put(10001, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
     spawnMap.put(18005, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
     spawnMap.put(100, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
