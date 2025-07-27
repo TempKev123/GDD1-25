@@ -42,7 +42,7 @@ public class Scene1 extends JPanel {
     private int gameOverCountdown = -1;
     private int elapsedFrames = 0;
     private int jefflife=15; //make 30 in level 2
-    private int maxstage = 2; //max stage
+    private int maxstage = 10; //max stage
 
     // private Shot shot;
 
@@ -165,7 +165,8 @@ private void loadSpawnDetails() {
 
     // ───── PowerUps ─────
     spawnMap.put(10000, new SpawnDetails("PowerUp-WeaponUpgrade", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
-
+    spawnMap.put(5000, new SpawnDetails("Alien2", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
+    spawnMap.put(50, new SpawnDetails("Alien2", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
     spawnMap.put(10001, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
     spawnMap.put(18005, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
     spawnMap.put(100, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
@@ -563,6 +564,8 @@ if (sd != null) {
         case "PowerUp-SpeedUp" -> powerups.add(new SpeedUp(sd.x, sd.y));
         case "PowerUp-MultiShot" -> powerups.add(new MultiShot(sd.x, sd.y));
         case "PowerUp-WeaponUpgrade" -> powerups.add(new WeaponUpgrade(sd.x, sd.y));
+        case "Alien2" -> enemies.add(new Alien2(sd.x, sd.y));
+        case "Alien1" -> enemies.add(new Alien1(sd.x, sd.y));
         case "Jeff" -> enemies.add(new Jeff(sd.x, sd.y));
         // ❌ ไม่ต้อง spawn Alien1/Alien2 ที่นี่แล้ว เพราะใช้ loadAlienGroups()
     }
@@ -763,7 +766,7 @@ if (sd != null) {
                 else{
                     enemy.setImage(explosionImage);
                     enemy.setDying(true);
-                    SoundEffect.play(SFX_INVKILLED, -5f); // 💥 เสียงระเบิดแบบไม่ดังแสบหู
+                    
                     deaths++;
                     ScoreTrack.instance.addScore(100); //+100 points
                     shot.die();
@@ -826,7 +829,7 @@ if (inTransition) {
             int key = e.getKeyCode();
 
             if (key == KeyEvent.VK_SPACE && inGame) {
-                if (shots.size() < 18) {
+                if (shots.size() < 1) {
                     SoundEffect.play(SFX_SHOOT);
                     int baseX = player.getX() + PLAYER_WIDTH;
                     int baseY = player.getY() + PLAYER_HEIGHT / 2;
