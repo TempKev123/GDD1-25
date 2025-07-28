@@ -25,7 +25,7 @@ public class Jeff extends Enemy{
         if (y==200){//yes the head jeff uses is determeined by the y position easiest way to do this
             head=IMG_BOSS1;
         }
-        else if (y==1){
+        else if (y<=100){
             head=IMG_BOSS3;
         }
         else{
@@ -86,7 +86,7 @@ public class Jeff extends Enemy{
 
     @Override
     public void act() {
-        if (x > BOARD_WIDTH - getImage().getWidth(null) - 10) {
+        if (x > BOARD_WIDTH - getImage().getWidth(null) +5) {
             // Step 1: Move left until just inside the screen
             x -= 2; // Move in smoothly
         } else {

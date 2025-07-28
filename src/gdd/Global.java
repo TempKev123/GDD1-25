@@ -1,5 +1,7 @@
 package gdd;
 
+import java.nio.file.Paths;
+
 public class Global {
     private Global() {
         // Prevent instantiation
@@ -32,29 +34,30 @@ public class Global {
 
 
     // Images
-    public static final String IMG_ENEMY = "GDD1-25\\src\\images\\alien.png";
-public static final String IMG_PLAYER = "GDD1-25\\src\\images\\ship.png";
-public static final String IMG_SHOT = "GDD1-25\\src\\images\\fire1.png";
-public static final String IMG_SUPERSHOT = "GDD1-25\\src\\images\\fire_poweerup.png";
-public static final String IMG_EXPLOSION = "GDD1-25\\src\\images\\explosion.png";
-public static final String IMG_TITLE = "GDD1-25\\src\\images\\title.png";
-public static final String IMG_POWERUP_SPEEDUP = "GDD1-25\\src\\images\\speedup.png";
-public static final String IMG_ALIEN2 = "GDD1-25\\src\\images\\alien2.png";
-public static final String IMG_POWERUP_MULTISHOT = "GDD1-25\\src\\images\\multishot.png";
-public static final String IMG_POWERUP_WEAPON = "GDD1-25\\src\\images\\upgrade.png";
-public static final String IMG_POWERUP_LAZER = "GDD1-25\\src\\images\\upgrade.png";
-public static final String IMG_BOSS1 = "GDD1-25\\src\\images\\jeff.png";
-public static final String IMG_BOSS2 = "GDD1-25\\src\\images\\jeff_mech_head.png";
-public static final String IMG_BOSS3 = "GDD1-25\\src\\images\\jeff_bone_head.png";
-public static final String IMG_BOSS_NECK = "GDD1-25\\src\\images\\jeff_neck.png";
-public static final String IMG_ENEMY_BULLET = "GDD1-25\\src\\images\\fire2.png";
+    public static final String IMG_ENEMY = Paths.get("src", "images", "alien.png").toString();
+    public static final String IMG_PLAYER = Paths.get("src", "images", "ship.png").toString();
+    public static final String IMG_SHOT = Paths.get("src", "images", "fire1.png").toString();
+    public static final String IMG_SUPERSHOT = Paths.get("src", "images", "fire_poweerup.png").toString();
+    public static final String IMG_EXPLOSION = Paths.get("src", "images", "explosion.png").toString();
+    public static final String IMG_TITLE = Paths.get("src", "images", "title.png").toString();
+    public static final String IMG_POWERUP_SPEEDUP = Paths.get("src", "images", "speedup.png").toString();
+    public static final String IMG_ALIEN2 = Paths.get("src", "images", "alien2.png").toString();
+    public static final String IMG_POWERUP_MULTISHOT = Paths.get("src", "images", "multishot.png").toString();
+    public static final String IMG_POWERUP_WEAPON = Paths.get("src", "images", "upgrade.png").toString();
+    public static final String IMG_POWERUP_LAZER = Paths.get("src", "images", "upgrade.png").toString();
+    public static final String IMG_BOSS1 = Paths.get("src", "images", "jeff.png").toString();
+    public static final String IMG_BOSS2 = Paths.get("src", "images", "jeff_mech_head.png").toString();
+    public static final String IMG_BOSS3 = Paths.get("src", "images", "jeff_bone_head.png").toString();
+    public static final String IMG_BOSS_NECK = Paths.get("src", "images", "jeff_neck.png").toString();
+    public static final String IMG_ENEMY_BULLET = Paths.get("src", "images", "fire2.png").toString();
 
-// SFX
-public static final String SFX_SHOOT = "GDD1-25\\src\\audio\\shoot.wav";
-public static final String SFX_EXPLOSION = "GDD1-25\\src\\audio\\explosion.wav";
-public static final String SFX_INVKILLED = "GDD1-25\\src\\audio\\invaderkilled.wav";
-public static final String SFX_TITLE = "GDD1-25\\src\\audio\\title.wav";
-public static final String SFX_BGM = "GDD1-25\\src\\audio\\scene1.wav";
+    // SFX
+    public static final String SFX_SHOOT = Paths.get("src", "audio", "shoot.wav").toString();
+    public static final String SFX_EXPLOSION = Paths.get("src", "audio", "explosion.wav").toString();
+    public static final String SFX_INVKILLED = Paths.get("src", "audio", "invaderkilled.wav").toString();  
+    public static final String SFX_TITLE = Paths.get("src", "audio", "title.wav").toString();
+    public static final String SFX_BGM = Paths.get("src", "audio", "scene1.wav").toString();
+
 
 }
 

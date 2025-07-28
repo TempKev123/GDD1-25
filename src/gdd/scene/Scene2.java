@@ -40,7 +40,9 @@ public class Scene2 extends JPanel {
     private Player player;
     private int gameOverCountdown = -1;
     private int elapsedFrames = 0;
-    private int jefflife=30; 
+    private int jefflife=1; 
+    private int jeffno=3;
+
 
 
     // private Shot shot;
@@ -55,6 +57,8 @@ public class Scene2 extends JPanel {
 
     private boolean inGame = true;
     private String message = "Game Over";
+
+    private String winmessage = "YOU WIN!";
 
     private final Dimension d = new Dimension(BOARD_WIDTH, BOARD_HEIGHT);
     private final Random randomizer = new Random();
@@ -103,9 +107,6 @@ private List<Enemy> currentGroup = new ArrayList<>();
 
     private HashMap<Integer, SpawnDetails> spawnMap = new HashMap<>();
     private AudioPlayer audioPlayer;
-    private int lastRowToShow;
-    private int firstRowToShow;
-
     public Scene2(Game game) {
         this.game = game;
         // initBoard();
@@ -220,7 +221,8 @@ private void loadSpawnDetails() {
     Random rand = new Random();
 
     // ───── PowerUps ─────
-    spawnMap.put(100, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, 100));
+    //spawnMap.put(100, new SpawnDetails("Jeff_boss", BOARD_WIDTH, 100)); // if you want to test the boss early
+    spawnMap.put(18000, new SpawnDetails("Jeff_boss", BOARD_WIDTH, 100));
     spawnMap.put(805, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, 300));
     spawnMap.put(501, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
     spawnMap.put(1500, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
@@ -575,8 +577,11 @@ private void explodePlayer() {
             if (timer.isRunning()) {
                 timer.stop();
             }
-
-            gameOver(g);
+            if (jeffno > 0) {
+                gameOver(g);
+            } else {
+                winscreen(g);
+            }
         }
 
         Toolkit.getDefaultToolkit().sync();
@@ -598,6 +603,24 @@ private void explodePlayer() {
         g.setColor(Color.white);
         g.setFont(small);
         g.drawString(message, (BOARD_WIDTH - fontMetrics.stringWidth(message)) / 2,
+                BOARD_WIDTH / 2);
+    }
+    private void winscreen(Graphics g) {
+
+        g.setColor(Color.black);
+        g.fillRect(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
+
+        g.setColor(new Color(0, 32, 48));
+        g.fillRect(50, BOARD_WIDTH / 2 - 30, BOARD_WIDTH - 100, 50);
+        g.setColor(Color.white);
+        g.drawRect(50, BOARD_WIDTH / 2 - 30, BOARD_WIDTH - 100, 50);
+
+        var small = new Font("Helvetica", Font.BOLD, 14);
+        var fontMetrics = this.getFontMetrics(small);
+
+        g.setColor(Color.white);
+        g.setFont(small);
+        g.drawString(winmessage, (BOARD_WIDTH - fontMetrics.stringWidth(winmessage)) / 2,
                 BOARD_WIDTH / 2);
     }
 
@@ -640,7 +663,13 @@ private void update() {
             case "PowerUp-SpeedUp" -> powerups.add(new SpeedUp(sd.x, sd.y));
             case "PowerUp-MultiShot" -> powerups.add(new MultiShot(sd.x, sd.y));
             case "PowerUp-WeaponUpgrade" -> powerups.add(new WeaponUpgrade(sd.x, sd.y));
-            case "Jeff" -> enemies.add(new Jeff(sd.x, sd.y));
+            //case "Jeff" -> enemies.add(new Jeff(sd.x, sd.y));
+            case "Jeff_boss" -> 
+            {
+                enemies.add(new Jeff(sd.x, 50));
+                enemies.add(new Jeff(sd.x, 200));
+                enemies.add(new Jeff(sd.x, 450));
+            }
         }
     }
 
@@ -771,13 +800,23 @@ private void update() {
 
                 if (isJeff && jefflife != 0) {
                     jefflife--;
-                    SoundEffect.play(SFX_EXPLOSION, -1f);
                 } else {
                     enemy.setImage(explosionImage);
                     enemy.setDying(true);
                     SoundEffect.play(SFX_INVKILLED, -5f);
                     deaths++;
                     ScoreTrack.instance.addScore(isJeff ? 1000 : 100);
+                    if(isJeff){
+                        jeffno--;
+                        if (jeffno > 0) {
+                            System.out.println("DRAGON defeated! Remaining: " + jeffno);
+                        }
+                        else {
+                            System.out.println("DRAGON defeated! No more DRAGONS left.");
+                            System.out.println("YOU WIN!");
+                            inGame=false;
+                        }
+                    } 
                 }
 
                 shot.die();

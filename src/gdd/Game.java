@@ -23,7 +23,7 @@ public class Game extends JFrame  {
 
     private void initUI() {
 
-        setTitle("Space Invaders");
+        setTitle("STAR EMBERS");
         System.out.println("Initializing UI...");
         setSize(Global.BOARD_WIDTH, Global.BOARD_HEIGHT);
 
@@ -63,7 +63,7 @@ public class Game extends JFrame  {
         System.out.println("Loading Scene 3...");
         getContentPane().removeAll();
         add(scene2);
-        scene1.stop();
+        titleScene.stop();
         scene2.start();
         revalidate();
         repaint();
