@@ -147,6 +147,10 @@ public class TitleScene extends JPanel {
                 System.out.println("Loading Scene 1...");
                 game.loadScene2();
             }
+            if (key == KeyEvent.VK_ESCAPE) {
+                System.out.println("skipping to end");
+                game.loadskip(); // Skip to Scene 2
+            }
 
         }
     }

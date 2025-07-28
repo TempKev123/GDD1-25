@@ -58,12 +58,21 @@ public class Game extends JFrame  {
         revalidate();
         repaint();
     }
+    public void loadskip() {
+        System.out.println("Loading Scene 2...");
+        getContentPane().removeAll();
+        add(scene2);
+        titleScene.stop();
+        scene2.start();
+        revalidate();
+        repaint();
+    }
 
     public void loadScene3() {
         System.out.println("Loading Scene 3...");
         getContentPane().removeAll();
         add(scene2);
-        titleScene.stop();
+        scene1.stop();
         scene2.start();
         revalidate();
         repaint();

@@ -40,7 +40,7 @@ public class Scene2 extends JPanel {
     private Player player;
     private int gameOverCountdown = -1;
     private int elapsedFrames = 0;
-    private int jefflife=1; 
+    private int jefflife=50; 
     private int jeffno=3;
 
 
@@ -221,8 +221,8 @@ private void loadSpawnDetails() {
     Random rand = new Random();
 
     // ───── PowerUps ─────
-    //spawnMap.put(100, new SpawnDetails("Jeff_boss", BOARD_WIDTH, 100)); // if you want to test the boss early
-    spawnMap.put(18000, new SpawnDetails("Jeff_boss", BOARD_WIDTH, 100));
+    //spawnMap.put(100, new SpawnDetails("Jeff_boss", 0, 0)); // if you want to test the boss early
+    spawnMap.put(12000, new SpawnDetails("Jeff_boss", 0, 0));
     spawnMap.put(805, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, 300));
     spawnMap.put(501, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
     spawnMap.put(1500, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
@@ -551,9 +551,9 @@ private void explodePlayer() {
 
 
         if (inTransition) {
-    g.setColor(Color.YELLOW);
-    g.setFont(new Font("Arial", Font.BOLD, 28));
-    g.drawString("WAVE " + (currentStage + 1), BOARD_WIDTH / 2 - 70, BOARD_HEIGHT / 2);
+    //g.setColor(Color.YELLOW);
+    //g.setFont(new Font("Arial", Font.BOLD, 28));
+    //g.drawString("WAVE " + (currentStage + 1), BOARD_WIDTH / 2 - 70, BOARD_HEIGHT / 2);
 }
 
 

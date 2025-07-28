@@ -843,6 +843,7 @@ private void update() {
                 loadAlienGroups();
             } else {
                 System.out.println("WIN LOAD SCENE 2");
+                frame=0;
                 game.loadScene3(); // go to Scene2
             }
         }
