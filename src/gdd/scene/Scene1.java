@@ -235,8 +235,8 @@ private void loadSpawnDetails() {
     spawnMap.put(3000, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
     spawnMap.put(1500, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
     spawnMap.put(5000, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
-    spawnMap.put(8000, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
-    spawnMap.put(16500, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
+    spawnMap.put(600, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
+    spawnMap.put(1701, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, rand.nextInt(550 - 50 + 1) + 50));
 
 
    
