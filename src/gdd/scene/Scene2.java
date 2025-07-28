@@ -329,7 +329,7 @@ private void drawMap(Graphics g) {
 
     // 🎯 Stage
     g2d.setColor(Color.GREEN);
-    g2d.drawString("WAVE" + currentStage, 20, 30);
+    g2d.drawString("LEVEL 2 WAVE: " + currentStage, 20, 30);
 
     // ⏱ Time (กลางบน)
     int seconds = elapsedFrames / 60;

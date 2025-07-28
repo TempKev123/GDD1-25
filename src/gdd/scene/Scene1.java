@@ -42,7 +42,7 @@ public class Scene1 extends JPanel {
     private int gameOverCountdown = -1;
     private int elapsedFrames = 0;
     private int jefflife=15; //make 30 in level 2
-    private int maxstage = 10; //max stage
+    private int maxstage = 25; //max stage
 
     // private Shot shot;
 
@@ -338,7 +338,7 @@ private void drawMap(Graphics g) {
 
     // 🎯 Stage
     g2d.setColor(Color.GREEN);
-    g2d.drawString("WAVE" + currentStage, 20, 30);
+    g2d.drawString("Level 1 WAVE: " + currentStage, 20, 30);
 
     // ⏱ Time (กลางบน)
     int seconds = elapsedFrames / 60;
