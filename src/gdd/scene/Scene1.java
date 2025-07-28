@@ -42,7 +42,7 @@ public class Scene1 extends JPanel {
     private int gameOverCountdown = -1;
     private int elapsedFrames = 0;
     private int jefflife=15; //make 30 in level 2
-    private int maxstage = 25; //max stage
+    private int maxstage = 26; //max stage
 
     // private Shot shot;
 
