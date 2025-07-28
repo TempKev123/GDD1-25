@@ -40,7 +40,7 @@ public class Scene2 extends JPanel {
     private Player player;
     private int gameOverCountdown = -1;
     private int elapsedFrames = 0;
-    private int jefflife=50; 
+    private int jefflife=100; 
     private int jeffno=3;
 
 
@@ -189,26 +189,21 @@ private void loadAlienGroups() {
 
         boolean isLastGroup = (g == groupCount - 1);
 
-        // 👑 Boss Jeff เฉพาะกลุ่มสุดท้าย
-        if (isLastGroup && currentStage % 2 == 0) {
-            int jeffY = 100 + (currentStage * 17) % 300;
-            Jeff boss = new Jeff(BOARD_WIDTH, jeffY);
-            group.add(boss);
+        
+        // 🎯 เปลี่ยนพฤติกรรมศัตรูตาม currentStage
+        if (currentStage <= 3) {
+            spawnAlien1Line(group);
+        } else if (currentStage <= 6) {
+            spawnAlien1Circle(group);
+        } else if (currentStage <= 10) {
+            spawnTeleportShooters(group);
+        } else if (currentStage <= 15) {
+            mixGroup(group, true);
         } else {
-            // 🎯 เปลี่ยนพฤติกรรมศัตรูตาม currentStage
-            if (currentStage <= 3) {
-                spawnAlien1Line(group);
-            } else if (currentStage <= 6) {
-                spawnAlien1Circle(group);
-            } else if (currentStage <= 10) {
-                spawnTeleportShooters(group);
-            } else if (currentStage <= 15) {
-                mixGroup(group, true);
-            } else {
-                mixGroup(group, true);
-                spawnAlien1Circle(group); // เพิ่มความโหด
-            }
+            mixGroup(group, true);
+            spawnAlien1Circle(group); // เพิ่มความโหด
         }
+        
 
         alienGroups.add(group);
     }
@@ -222,7 +217,7 @@ private void loadSpawnDetails() {
 
     // ───── PowerUps ─────
     //spawnMap.put(100, new SpawnDetails("Jeff_boss", 0, 0)); // if you want to test the boss early
-    spawnMap.put(12000, new SpawnDetails("Jeff_boss", 0, 0));
+    spawnMap.put(15000, new SpawnDetails("Jeff_boss", BOARD_WIDTH, 0));
     spawnMap.put(805, new SpawnDetails("PowerUp-SpeedUp", BOARD_WIDTH, 300));
     spawnMap.put(501, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
     spawnMap.put(1500, new SpawnDetails("PowerUp-MultiShot", BOARD_WIDTH, 200));
