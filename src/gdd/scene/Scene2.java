@@ -10,7 +10,6 @@ import gdd.powerup.PowerUp;
 import gdd.powerup.SpeedUp;
 import gdd.powerup.WeaponUpgrade;
 import gdd.sprite.*;
-import gdd.scene.ScoreTrack;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -125,36 +124,95 @@ private List<Enemy> currentGroup = new ArrayList<>();
         }
     }
 
-private void loadAlienGroups() {
-    int groupCount = 5;
 
+private void spawnAlien1Line(List<Enemy> group) {
+    int x = BOARD_WIDTH;
+    int startY = randomizer.nextInt(300 - 50) + 50;
+    int gapY = 40;
+    for (int i = 0; i < 5; i++) {
+        int y = startY + i * gapY;
+        Alien1 a = new Alien1(x, y);
+        a.setStopAtCenter(true);
+        group.add(a);
+    }
+}
+
+private void spawnAlien1Circle(List<Enemy> group) {
+    int centerX = BOARD_WIDTH / 2;
+    int centerY = BOARD_HEIGHT / 2;
+    int radius = 100;
+    double angleStep = 2 * Math.PI / 6;
+    for (int i = 0; i < 6; i++) {
+        double angle = i * angleStep;
+        Alien1Circle alien = new Alien1Circle(centerX, centerY, radius, angle); // ✅ ไม่มี player แล้ว
+        group.add(alien);
+    }
+}
+
+
+
+private void spawnTeleportShooters(List<Enemy> group) {
+    for (int i = 0; i < 3; i++) {
+        int x = 300 + randomizer.nextInt(BOARD_WIDTH - 400); // 🎯 ปลอดภัยอยู่ตรงกลางจอ
+        int y = 100 + randomizer.nextInt(BOARD_HEIGHT - 200);
+        AlienTeleportShooter ats = new AlienTeleportShooter(x, y);
+        group.add(ats);
+        System.out.println("Spawn TeleportShooter at x=" + x + ", y=" + y);
+    }
+}
+
+
+private void mixGroup(List<Enemy> group, boolean includeCircle) {
+    int roll = randomizer.nextInt(3);
+    switch (roll) {
+        case 0 -> spawnAlien1Line(group);
+        case 1 -> spawnTeleportShooters(group);
+        case 2 -> {
+            if (includeCircle) {
+                spawnAlien1Circle(group);
+            } else {
+                spawnAlien1Line(group);
+            }
+        }
+    }
+}
+
+
+private void loadAlienGroups() {
+    System.out.println("Loading alien groups for stage " + currentStage);
+    alienGroups.clear();
+
+    int groupCount = 3 + currentStage % 2; // เพิ่มความหลากหลาย
     for (int g = 0; g < groupCount; g++) {
         List<Enemy> group = new ArrayList<>();
 
-        if (g == 1) {
-            // 👑 กลุ่มสุดท้าย → Boss (เปลี่ยนตาม stage ได้)
-            // game.loadScene3();
-            Jeff boss = new Jeff(BOARD_WIDTH, 200);
+        boolean isLastGroup = (g == groupCount - 1);
+
+        // 👑 Boss Jeff เฉพาะกลุ่มสุดท้าย
+        if (isLastGroup && currentStage % 2 == 0) {
+            int jeffY = 100 + (currentStage * 17) % 300;
+            Jeff boss = new Jeff(BOARD_WIDTH, jeffY);
             group.add(boss);
         } else {
-            int x = BOARD_WIDTH;
-            int startY = 100;
-            int gapY = 60;
-
-            for (int i = 0; i < 5; i++) {
-                int y = startY + (i * gapY);
-                Alien1 alien = new Alien1(x, y);
-                alien.setStopAtCenter(true);
-
-                
-
-                group.add(alien);
+            // 🎯 เปลี่ยนพฤติกรรมศัตรูตาม currentStage
+            if (currentStage <= 3) {
+                spawnAlien1Line(group);
+            } else if (currentStage <= 6) {
+                spawnAlien1Circle(group);
+            } else if (currentStage <= 10) {
+                spawnTeleportShooters(group);
+            } else if (currentStage <= 15) {
+                mixGroup(group, true);
+            } else {
+                mixGroup(group, true);
+                spawnAlien1Circle(group); // เพิ่มความโหด
             }
         }
 
         alienGroups.add(group);
     }
 }
+
 
 private void loadSpawnDetails() {
     //spawnMap.put(50, new SpawnDetails("Jeff", BOARD_WIDTH, 200)); // spawn at frame 1000
@@ -353,6 +411,31 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
 }
 
 
+private void explodePlayer() {
+    if (player.isDying()) return;
+
+    Image explosionImage = new ImageIcon(IMG_EXPLOSION).getImage();
+    int centerX = player.getX() + player.getImage().getWidth(null) / 2;
+    int centerY = player.getY() + player.getImage().getHeight(null) / 2;
+    int scaledWidth = explosionImage.getWidth(null) * 2;
+    int scaledHeight = explosionImage.getHeight(null) * 2;
+    Image scaledExplosion = explosionImage.getScaledInstance(
+            scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
+
+    explosions.add(new Explosion(
+            centerX - scaledWidth / 2,
+            centerY - scaledHeight / 2,
+            scaledExplosion
+    ));
+
+    SoundEffect.play(SFX_EXPLOSION, 0f);
+    player.setDying(true);
+    gameOverCountdown = 60;
+}
+
+
+
+
     private void drawAliens(Graphics g) {
 
         for (Enemy enemy : enemies) {
@@ -519,55 +602,47 @@ private void drawStar(Graphics g, int x, int y, int width, int height) {
     }
 
 private void update() {
-    // ───── กลุ่มศัตรู wave-based ─────
-   if (!waitingForNextGroup && currentGroupIndex < alienGroups.size()) {
-    currentGroup = alienGroups.get(currentGroupIndex);
-    enemies.addAll(currentGroup);
-    waitingForNextGroup = true;
-}
+    // ───── Load group if needed ─────
+    if (!waitingForNextGroup && currentGroupIndex < alienGroups.size()) {
+        currentGroup = alienGroups.get(currentGroupIndex);
+        enemies.addAll(currentGroup);
+        waitingForNextGroup = true;
+    }
 
-// ตรวจว่าศัตรูในกลุ่มตายหมดหรือยัง
-if (waitingForNextGroup) {
-    boolean allDead = true;
-    for (Enemy e : currentGroup) {
-        if (e.isVisible()) {
-            allDead = false;
-            break;
+    // ───── Check if current group is done ─────
+    if (waitingForNextGroup) {
+        boolean allDead = true;
+        for (Enemy e : currentGroup) {
+            if (e.isVisible()) {
+                allDead = false;
+                break;
+            }
+        }
+
+        if (allDead) {
+            waitTimer++;
+            if (waitTimer >= WAIT_DURATION) {
+                waitTimer = 0;
+                waitingForNextGroup = false;
+                currentGroupIndex++;
+                enemies.removeAll(currentGroup);
+            }
         }
     }
 
-    if (allDead) {
-        waitTimer++;
-        if (waitTimer >= WAIT_DURATION) {
-            waitTimer = 0;
-            waitingForNextGroup = false;
-            currentGroupIndex++;
-
-            enemies.removeAll(currentGroup); // ✅ ล้างกลุ่มเดิมทิ้ง (ทุกชนิดศัตรู)
-        }
-    }
-}
-
-
-
-// ───── Spawn PowerUps จาก spawnMap ─────
-SpawnDetails sd = spawnMap.get(frame);
-if (sd != null) {
-    switch (sd.type) {
-        case "PowerUp-SpeedUp" -> powerups.add(new SpeedUp(sd.x, sd.y));
-        case "PowerUp-MultiShot" -> powerups.add(new MultiShot(sd.x, sd.y));
-        case "PowerUp-WeaponUpgrade" -> powerups.add(new WeaponUpgrade(sd.x, sd.y));
-        case "Jeff" -> enemies.add(new Jeff(sd.x, sd.y));
-        // ❌ ไม่ต้อง spawn Alien1/Alien2 ที่นี่แล้ว เพราะใช้ loadAlienGroups()
-    }
-}
-
-
-
-
-
-    // ───── Player move ─────
+    // ───── Player movement ─────
     player.act();
+
+    // ───── Spawn PowerUps ─────
+    SpawnDetails sd = spawnMap.get(frame);
+    if (sd != null) {
+        switch (sd.type) {
+            case "PowerUp-SpeedUp" -> powerups.add(new SpeedUp(sd.x, sd.y));
+            case "PowerUp-MultiShot" -> powerups.add(new MultiShot(sd.x, sd.y));
+            case "PowerUp-WeaponUpgrade" -> powerups.add(new WeaponUpgrade(sd.x, sd.y));
+            case "Jeff" -> enemies.add(new Jeff(sd.x, sd.y));
+        }
+    }
 
     // ───── PowerUps ─────
     for (PowerUp powerup : powerups) {
@@ -585,84 +660,44 @@ if (sd != null) {
             enemy.act();
 
             if (player.collidesWith(enemy)) {
-                Image explosionImage = new ImageIcon(IMG_EXPLOSION).getImage();
-                int centerX = player.getX() + player.getImage().getWidth(null) / 2;
-                int centerY = player.getY() + player.getImage().getHeight(null) / 2;
-                int scaledWidth = explosionImage.getWidth(null) * 2;
-                int scaledHeight = explosionImage.getHeight(null) * 2;
-                Image scaledExplosion = explosionImage.getScaledInstance(
-                        scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
-
-                explosions.add(new Explosion(
-                        centerX - scaledWidth / 2,
-                        centerY - scaledHeight / 2,
-                        scaledExplosion
-                ));
-                SoundEffect.play(SFX_EXPLOSION, 0f); // 🔊 เล่นเสียงผู้เล่นตาย
-                player.setDying(true);
-                gameOverCountdown = 60;
+                explodePlayer();
             }
         }
 
-        // ───── กระสุนของศัตรู (Alien1 และ Jeff) ─────
+        // ───── Enemy Bullet collision ─────
         if (enemy instanceof Alien1 alien1) {
             for (EnemyBullet bullet : alien1.getBullets()) {
                 if (bullet.isVisible()) {
                     bullet.act();
-
                     if (bullet.collidesWith(player)) {
                         bullet.die();
-                        SoundEffect.play(SFX_EXPLOSION, 0f); // 🔊 เล่นเสียงผู้เล่นตาย
-                        player.setDying(true);
-                        explosions.add(new Explosion(
-                                player.getX(), player.getY(),
-                                new ImageIcon(IMG_EXPLOSION).getImage()
-                        ));
-                        gameOverCountdown = 60;
+                        explodePlayer();
                     }
                 }
             }
-        }
-        // ───── Jeff bullet collision ─────
-        else if (enemy instanceof Jeff jeff) {
+        } else if (enemy instanceof Jeff jeff) {
             for (EnemyBullet bullet : jeff.getBullets()) {
                 if (bullet.isVisible()) {
                     bullet.act();
-
                     if (bullet.collidesWith(player)) {
                         bullet.die();
-                        SoundEffect.play(SFX_EXPLOSION, 0f); // 🔊 เล่นเสียงผู้เล่นตาย
-                        player.setDying(true);
-                        
-                        // Create explosion at player position
-                        Image explosionImage = new ImageIcon(IMG_EXPLOSION).getImage();
-                        int centerX = player.getX() + player.getImage().getWidth(null) / 2;
-                        int centerY = player.getY() + player.getImage().getHeight(null) / 2;
-                        int scaledWidth = explosionImage.getWidth(null) * 2;
-                        int scaledHeight = explosionImage.getHeight(null) * 2;
-                        Image scaledExplosion = explosionImage.getScaledInstance(
-                                scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
-
-                        explosions.add(new Explosion(
-                                centerX - scaledWidth / 2,
-                                centerY - scaledHeight / 2,
-                                scaledExplosion
-                        ));
-                        gameOverCountdown = 60;
+                        explodePlayer();
                     }
                 }
             }
         }
     }
 
-    // ───── ยิงทีละลำตามลำดับ ─────
+    // ───── Sequential Fire (Alien1 only) ─────
     if (alienShootCooldown > 0) {
         alienShootCooldown--;
     } else {
         List<Alien1> aliveAliens = new ArrayList<>();
         for (Enemy e : enemies) {
             if (e instanceof Alien1 a && a.isVisible()) {
-                aliveAliens.add(a);
+                if (!(a instanceof Alien1Circle) || ((Alien1Circle) a).canShoot()) {
+                    aliveAliens.add(a);
+                }
             }
         }
 
@@ -670,11 +705,11 @@ if (sd != null) {
             Alien1 shooter = aliveAliens.get(shooterIndex % aliveAliens.size());
             shooter.fire(); 
             shooterIndex++;
-            alienShootCooldown = SHOOT_DELAY; // เว้นจังหวะยิง
+            alienShootCooldown = SHOOT_DELAY;
         }
     }
 
-    // ───── Explosion update ─────
+    // ───── Explosions ─────
     for (Explosion explosion : explosions) {
         explosion.act();
     }
@@ -691,7 +726,6 @@ if (sd != null) {
     List<Shot> shotsToRemove = new ArrayList<>();
     for (Shot shot : shots) {
         shot.act();
-
         if (!shot.isVisible()) {
             shotsToRemove.add(shot);
             continue;
@@ -705,25 +739,20 @@ if (sd != null) {
 
             int enemyX = enemy.getX();
             int enemyY = enemy.getY();
-            // Set default hitbox
-            int hitboxOffsetX = 0;
-            int hitboxOffsetY = 0;
             int hitboxWidth = ALIEN_WIDTH;
             int hitboxHeight = ALIEN_HEIGHT;
-            int EXSIZE=2;
-            boolean isJeff=false;
+            int EXSIZE = 2;
+            boolean isJeff = false;
 
-            // Per-enemy hitbox override
             if (enemy instanceof Jeff) {
                 hitboxWidth = 200;
                 hitboxHeight = 220;
-                EXSIZE=5;
-                isJeff=true;}
+                EXSIZE = 5;
+                isJeff = true;
+            }
 
-
-            if (shotX >= enemyX + hitboxOffsetX && shotX <= enemyX + hitboxOffsetX + hitboxWidth
-        && shotY >= enemyY + hitboxOffsetY && shotY <= enemyY + hitboxOffsetY + hitboxHeight)
-            {
+            if (shotX >= enemyX && shotX <= enemyX + hitboxWidth
+                && shotY >= enemyY && shotY <= enemyY + hitboxHeight) {
 
                 Image explosionImage = new ImageIcon(IMG_EXPLOSION).getImage();
                 Image scaledExplosion = explosionImage.getScaledInstance(
@@ -740,59 +769,45 @@ if (sd != null) {
                         scaledExplosion
                 ));
 
-                 if(isJeff && jefflife !=0){
+                if (isJeff && jefflife != 0) {
                     jefflife--;
                     SoundEffect.play(SFX_EXPLOSION, -1f);
-                    shot.die();
-                    shotsToRemove.add(shot);
-                }
-                else if(isJeff && jefflife <= 0){
+                } else {
                     enemy.setImage(explosionImage);
                     enemy.setDying(true);
-                    SoundEffect.play(SFX_INVKILLED, -5f); // 💥 เสียงระเบิดแบบไม่ดังแสบหู
+                    SoundEffect.play(SFX_INVKILLED, -5f);
                     deaths++;
-                    ScoreTrack.instance.addScore(1000); //+1000 points
-                    shot.die();
-                    shotsToRemove.add(shot);
-                    jefflife =10;
+                    ScoreTrack.instance.addScore(isJeff ? 1000 : 100);
                 }
-                else{
-                    enemy.setImage(explosionImage);
-                    enemy.setDying(true);
-                    SoundEffect.play(SFX_INVKILLED, -5f); // 💥 เสียงระเบิดแบบไม่ดังแสบหู
-                    deaths++;
-                    ScoreTrack.instance.addScore(100); //+100 points
-                    shot.die();
-                    shotsToRemove.add(shot);
-                }
+
+                shot.die();
+                shotsToRemove.add(shot);
+                break;
             }
         }
     }
 
     shots.removeAll(shotsToRemove);
 
+    // ───── Stage Transition ─────
+    if (!inTransition && currentGroupIndex >= alienGroups.size()) {
+        inTransition = true;
+        transitionTimer = TRANSITION_DURATION;
+    }
 
-// ───── Stage Transition เมื่อ wave สุดท้ายผ่านไป ─────
-if (!inTransition && currentGroupIndex >= alienGroups.size()) {
-    inTransition = true;
-    transitionTimer = TRANSITION_DURATION;
-}
-
-if (inTransition) {
-    transitionTimer--;
-    if (transitionTimer <= 0) {
-        inTransition = false;
-        currentStage++;                // ⬆️ Stage +1
-        currentGroupIndex = 0;
-        shooterIndex = 0;
-        alienGroups.clear();          // ล้าง wave เดิม
-        loadAlienGroups();            // โหลด wave ใหม่
+    if (inTransition) {
+        transitionTimer--;
+        if (transitionTimer <= 0) {
+            inTransition = false;
+            currentStage++;
+            currentGroupIndex = 0;
+            shooterIndex = 0;
+            alienGroups.clear();
+            loadAlienGroups(); // 🔁 load wave ใหม่
+        }
     }
 }
 
-
-
-}
 
 
 
